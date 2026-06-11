@@ -3,112 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Grace Ahrens — fantasy novelist crafting worlds of magic, myth, and adventure.">
-  <title>Grace Ahrens | Fantasy Author</title>
+  <meta name="description" content="Grace Ahrens writes epic fantasy about history, power, and the stories we choose to believe.">
+  <title>Grace Ahrens — Fantasy Author</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <nav class="nav">
-      <a href="#" class="nav-logo">Grace Ahrens</a>
-      <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#works">Works</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="#" class="logo">Grace Ahrens</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+        <span></span>
+        <span></span>
+      </button>
+      <nav id="site-nav" class="nav">
+        <a href="#books">Books</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
   </header>
 
   <main>
     <section class="hero">
-      <p class="hero-eyebrow">Fantasy Author</p>
-      <h1>Grace Ahrens</h1>
-      <p class="hero-tagline">Weaving tales of ancient magic, forgotten kingdoms, and heroes who dare to dream.</p>
-      <a href="#works" class="btn">Explore the Worlds</a>
-    </section>
-
-    <section id="about" class="section about">
-      <div class="section-inner">
-        <h2>About</h2>
-        <div class="about-content">
-          <p>
-            Grace Ahrens has spent years wandering the borderlands between waking life and the realms
-            of imagination. A lifelong reader of epic fantasy, she writes stories where the old gods
-            still whisper in the wind and every choice carries the weight of prophecy.
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Fantasy Author</p>
+          <h1>Stories where history is written by the people who survive it.</h1>
+          <p class="lead">
+            Grace Ahrens writes epic fantasy about archives, empires, and the quiet courage
+            it takes to question what everyone already believes.
           </p>
-          <p>
-            When she isn't drafting new adventures, Grace can be found collecting folklore, sketching
-            maps of imaginary lands, and drinking far too much tea while debating whether dragons
-            would prefer mountains or coastlines.
-          </p>
-          <p class="about-note">
-            Her debut novel is currently in progress — stay tuned for news from the other side of the veil.
-          </p>
+          <div class="hero-actions">
+            <a href="#books" class="btn btn-primary">Read about the debut</a>
+            <a href="#contact" class="btn btn-secondary">Get updates</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="book-mockup">
+            <div class="book-cover">
+              <span class="book-cover-label">Debut Novel</span>
+              <span class="book-cover-title">Untitled</span>
+              <span class="book-cover-author">Grace Ahrens</span>
+            </div>
+            <div class="book-spine"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="works" class="section works">
-      <div class="section-inner">
-        <h2>Works</h2>
-        <p class="section-intro">Stories still being written beneath starlight.</p>
+    <section id="books" class="section">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Books</p>
+          <h2>What&apos;s coming next</h2>
+        </div>
 
-        <div class="works-grid">
-          <article class="work-card work-card--coming-soon">
-            <div class="work-card-badge">In Progress</div>
+        <div class="book-feature">
+          <div class="book-feature-cover" aria-hidden="true">
+            <div class="cover-art">
+              <span>In progress</span>
+            </div>
+          </div>
+          <div class="book-feature-content">
+            <span class="badge">Debut · Epic Fantasy</span>
             <h3>Untitled Debut</h3>
-            <p class="work-genre">Epic Fantasy</p>
-            <p>
+            <p class="book-blurb">
               A young archivist discovers that the histories she has spent her life preserving
               are lies — and that the truth could unravel an empire built on silence.
             </p>
-          </article>
-
-          <article class="work-card work-card--placeholder">
-            <div class="work-card-badge">Future</div>
-            <h3>More to Come</h3>
-            <p class="work-genre">Fantasy</p>
-            <p>
-              Additional worlds are taking shape in the margins. New maps, new myths, new
-              characters waiting for their moment to step into the light.
-            </p>
-          </article>
+            <ul class="book-meta">
+              <li>Status: drafting</li>
+              <li>Genre: epic fantasy</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="contact" class="section contact">
-      <div class="section-inner">
-        <h2>Stay in Touch</h2>
-        <p>
-          Want to know when the debut novel is ready for readers? Send a note and Grace will
-          keep you posted on release news and occasional glimpses behind the scenes.
-        </p>
-        <form class="contact-form" action="mailto:hello@graceahrens.com" method="post" enctype="text/plain">
-          <label for="email" class="visually-hidden">Your email</label>
-          <input type="email" id="email" name="email" placeholder="your@email.com" required>
-          <label for="message" class="visually-hidden">Message</label>
-          <textarea id="message" name="message" rows="4" placeholder="Say hello…" required></textarea>
-          <button type="submit" class="btn">Send Message</button>
-        </form>
-        <p class="contact-note">
-          Or reach out directly at
-          <a href="mailto:hello@graceahrens.com">hello@graceahrens.com</a>
-        </p>
+    <section id="about" class="section section-muted">
+      <div class="container about-grid">
+        <div class="about-intro">
+          <p class="eyebrow">About</p>
+          <h2>Grace Ahrens</h2>
+        </div>
+        <div class="about-body">
+          <p>
+            Grace grew up on long fantasy series, annotated maps, and notebooks full of
+            half-finished worlds. She writes fiction that balances wonder with consequence —
+            stories where magic exists, but so do politics, grief, and hard choices.
+          </p>
+          <p>
+            When she is not writing, she reads folklore, collects story ideas from long walks,
+            and drinks more tea than any reasonable person should admit to.
+          </p>
+          <p>
+            Her first novel is currently in progress. This site will be updated as publication
+            news becomes available.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <div class="cta-card">
+          <div class="cta-copy">
+            <p class="eyebrow">Newsletter</p>
+            <h2>Be first to know when the book is ready</h2>
+            <p>
+              Leave your email and Grace will send occasional updates — release news,
+              cover reveals, and nothing spammy.
+            </p>
+          </div>
+          <form class="cta-form" action="mailto:hello@graceahrens.com" method="post" enctype="text/plain">
+            <label for="email" class="visually-hidden">Email address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            <button type="submit" class="btn btn-primary">Notify me</button>
+          </form>
+          <p class="cta-note">
+            Prefer email? Write to
+            <a href="mailto:hello@graceahrens.com">hello@graceahrens.com</a>
+          </p>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>&copy; <span id="year"></span> Grace Ahrens. All rights reserved.</p>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="footer-name">Grace Ahrens</p>
+      <p class="footer-copy">&copy; <span id="year"></span> Grace Ahrens. All rights reserved.</p>
+    </div>
   </footer>
 
   <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('.nav');
+
+    toggle.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open);
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
+      });
+    });
+
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
