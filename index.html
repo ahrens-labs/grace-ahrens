@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Grace Ahrens — fantasy novelist crafting worlds of magic, myth, and adventure.">
+  <title>Grace Ahrens | Fantasy Author</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="#" class="nav-logo">Grace Ahrens</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#works">Works</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="hero-eyebrow">Fantasy Author</p>
+      <h1>Grace Ahrens</h1>
+      <p class="hero-tagline">Weaving tales of ancient magic, forgotten kingdoms, and heroes who dare to dream.</p>
+      <a href="#works" class="btn">Explore the Worlds</a>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="section-inner">
+        <h2>About</h2>
+        <div class="about-content">
+          <p>
+            Grace Ahrens has spent years wandering the borderlands between waking life and the realms
+            of imagination. A lifelong reader of epic fantasy, she writes stories where the old gods
+            still whisper in the wind and every choice carries the weight of prophecy.
+          </p>
+          <p>
+            When she isn't drafting new adventures, Grace can be found collecting folklore, sketching
+            maps of imaginary lands, and drinking far too much tea while debating whether dragons
+            would prefer mountains or coastlines.
+          </p>
+          <p class="about-note">
+            Her debut novel is currently in progress — stay tuned for news from the other side of the veil.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="works" class="section works">
+      <div class="section-inner">
+        <h2>Works</h2>
+        <p class="section-intro">Stories still being written beneath starlight.</p>
+
+        <div class="works-grid">
+          <article class="work-card work-card--coming-soon">
+            <div class="work-card-badge">In Progress</div>
+            <h3>Untitled Debut</h3>
+            <p class="work-genre">Epic Fantasy</p>
+            <p>
+              A young archivist discovers that the histories she has spent her life preserving
+              are lies — and that the truth could unravel an empire built on silence.
+            </p>
+          </article>
+
+          <article class="work-card work-card--placeholder">
+            <div class="work-card-badge">Future</div>
+            <h3>More to Come</h3>
+            <p class="work-genre">Fantasy</p>
+            <p>
+              Additional worlds are taking shape in the margins. New maps, new myths, new
+              characters waiting for their moment to step into the light.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div class="section-inner">
+        <h2>Stay in Touch</h2>
+        <p>
+          Want to know when the debut novel is ready for readers? Send a note and Grace will
+          keep you posted on release news and occasional glimpses behind the scenes.
+        </p>
+        <form class="contact-form" action="mailto:hello@graceahrens.com" method="post" enctype="text/plain">
+          <label for="email" class="visually-hidden">Your email</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          <label for="message" class="visually-hidden">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Say hello…" required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+        <p class="contact-note">
+          Or reach out directly at
+          <a href="mailto:hello@graceahrens.com">hello@graceahrens.com</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> Grace Ahrens. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
