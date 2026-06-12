@@ -152,10 +152,14 @@ async function initAdmin() {
         return;
       }
 
-      document.getElementById("pending-message").innerHTML =
-        `${data.message || `We sent a confirmation link to <strong>${email}</strong>.`} Then come back here to sign in.`;
-      sessionStorage.setItem("adminPendingEmail", email);
-      showPanel("pending-panel");
+      setupForm.reset();
+      fillEmailSelect(document.getElementById("login-email"), email);
+      setMessage(
+        loginMessage,
+        data.message || `Password set for ${email}. You can sign in now.`,
+        "success"
+      );
+      showPanel("login-panel");
     } catch {
       setMessage(setupMessage, "Network error. Please try again.", "error");
     } finally {
