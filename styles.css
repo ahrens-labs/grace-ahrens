@@ -37,6 +37,7 @@ html {
 }
 
 body {
+  position: relative;
   font-family: var(--font-body);
   font-size: 1.125rem;
   line-height: 1.8;
@@ -65,7 +66,7 @@ a {
 /* Starfield */
 
 .page-stars {
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
