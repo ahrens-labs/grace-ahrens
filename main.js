@@ -48,7 +48,6 @@ function initStars() {
     if (item.float) el.classList.add("float");
     el.style.top = item.top;
     el.style.left = item.left;
-    el.style.opacity = item.opacity;
     if (item.rotate) el.style.transform = `rotate(${item.rotate}deg)`;
     if (item.delay != null) el.style.animationDelay = `${item.delay}s`;
     el.setAttribute("aria-hidden", "true");

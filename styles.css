@@ -19,9 +19,11 @@
   --parchment: #f0ebe2;
   --parchment-light: #f8f4ed;
   --parchment-shadow: #ddd4c6;
-  --text: #141c2b;
-  --text-muted: #4a5568;
-  --text-soft: #6b7280;
+  --text: #121820;
+  --text-muted: #2f3848;
+  --text-soft: #4b5568;
+  --text-on-dark: #eef2f8;
+  --text-on-dark-muted: #d4ddea;
   --accent: #1e3a66;
   --font-title: "Bodoni Moda", Georgia, serif;
   --font-display: "Fraunces", Georgia, serif;
@@ -36,18 +38,24 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: 1.07rem;
-  line-height: 1.78;
+  font-size: 1.125rem;
+  line-height: 1.8;
   color: var(--text);
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(19, 35, 63, 0.22), transparent 58%),
-    radial-gradient(ellipse 45% 35% at 0% 55%, rgba(19, 35, 63, 0.1), transparent 55%),
-    radial-gradient(ellipse 45% 35% at 100% 75%, rgba(19, 35, 63, 0.08), transparent 55%),
-    linear-gradient(175deg, #e8e1d6 0%, var(--parchment-light) 38%, #ebe4da 100%);
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(19, 35, 63, 0.12), transparent 58%),
+    radial-gradient(ellipse 45% 35% at 0% 55%, rgba(19, 35, 63, 0.06), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 100% 75%, rgba(19, 35, 63, 0.05), transparent 55%),
+    linear-gradient(175deg, #ebe6de 0%, var(--parchment-light) 38%, #ebe4da 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--navy-glow);
+  outline-offset: 3px;
 }
 
 a {
@@ -69,7 +77,12 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.35;
+  opacity: 0.18;
+}
+
+.page-stars .star,
+.page-stars .sparkle {
+  opacity: 0.45;
 }
 
 .star,
@@ -126,8 +139,8 @@ a {
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.25; transform: scale(0.92); }
-  50% { opacity: 0.95; transform: scale(1.08); }
+  0%, 100% { opacity: 0.3; transform: scale(0.96); }
+  50% { opacity: 0.65; transform: scale(1.04); }
 }
 
 @keyframes starFloat {
@@ -215,30 +228,27 @@ a {
 
 .site-title {
   font-family: var(--font-title);
-  font-size: clamp(2.15rem, 5.5vw, 3.1rem);
+  font-size: clamp(2.15rem, 5.5vw, 3rem);
   font-weight: 600;
   font-style: italic;
-  letter-spacing: 0.03em;
-  line-height: 1.05;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
   text-decoration: none;
-  background: linear-gradient(165deg, #fff 0%, var(--silver-bright) 45%, var(--moon) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 2px 18px rgba(184, 201, 228, 0.25));
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(8, 15, 28, 0.35);
 }
 
 .site-title:hover {
-  filter: drop-shadow(0 2px 22px rgba(238, 242, 250, 0.45));
+  color: var(--silver-bright);
 }
 
 .site-tagline {
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(210, 218, 232, 0.72);
+  color: var(--text-on-dark-muted);
 }
 
 .site-nav ul {
@@ -255,8 +265,8 @@ a {
   color: #fff;
   text-decoration: none;
   font-family: var(--font-body);
-  font-size: 0.92rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   padding: 0.58rem 1.1rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -344,15 +354,11 @@ main {
 
 .section-card {
   position: relative;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.35)),
-    var(--parchment-light);
-  border: 1px solid var(--parchment-shadow);
+  background: #faf8f4;
+  border: 1px solid #cfc6b8;
   border-radius: 4px;
   padding: clamp(2rem, 5vw, 2.85rem);
-  box-shadow:
-    0 22px 50px rgba(19, 35, 63, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  box-shadow: 0 18px 40px rgba(19, 35, 63, 0.08);
 }
 
 .section-card::before,
@@ -384,10 +390,8 @@ main {
 }
 
 .section-card--featured {
-  border-color: rgba(30, 58, 102, 0.18);
-  background:
-    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(184, 201, 228, 0.18), transparent 55%),
-    linear-gradient(155deg, #faf7f1 0%, var(--parchment-light) 55%, #ebe4d9 100%);
+  border-color: #c4b9a8;
+  background: #fffdf9;
 }
 
 .section-card--newsletter {
@@ -423,21 +427,24 @@ main {
 
 .section-card--newsletter p,
 .section-card--newsletter .signup-note {
-  color: rgba(210, 218, 232, 0.82);
+  color: var(--text-on-dark-muted);
 }
 
 .section-card--newsletter .signup-form label {
-  color: var(--silver-bright);
+  color: var(--text-on-dark);
+  font-size: 0.98rem;
 }
 
 .section-card--newsletter .signup-form input {
-  background: rgba(8, 15, 28, 0.35);
-  border-color: rgba(210, 218, 232, 0.25);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(228, 234, 244, 0.45);
+  color: var(--text-on-dark);
+  font-size: 1.05rem;
 }
 
 .section-card--newsletter .signup-form input::placeholder {
-  color: rgba(210, 218, 232, 0.45);
+  color: rgba(220, 228, 240, 0.65);
+  font-style: normal;
 }
 
 .section-card--newsletter .signup-form input:focus {
@@ -446,7 +453,9 @@ main {
 }
 
 .section-card--newsletter .signup-note a {
-  color: var(--silver-bright);
+  color: var(--text-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .section-card--newsletter .btn-primary {
@@ -463,9 +472,9 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 0.9rem;
@@ -486,23 +495,27 @@ main {
   font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 1.15;
+  line-height: 1.25;
   color: var(--navy-deep);
+  max-width: 22ch;
 }
 
 .section-card h1 {
-  font-size: clamp(2rem, 4.5vw, 2.75rem);
-  margin-bottom: 1rem;
+  font-size: clamp(2.1rem, 4.5vw, 2.65rem);
+  margin-bottom: 1.1rem;
 }
 
 .section-card h2 {
-  font-size: clamp(1.65rem, 3.5vw, 2.15rem);
-  margin-bottom: 0.85rem;
+  font-size: clamp(1.75rem, 3.5vw, 2.1rem);
+  margin-bottom: 1rem;
+  max-width: none;
 }
 
 .section-card p {
   color: var(--text-muted);
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
+  max-width: 42rem;
+  text-wrap: pretty;
 }
 
 .section-card p:last-child {
@@ -510,10 +523,11 @@ main {
 }
 
 .lead {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-style: italic;
   color: var(--text);
-  line-height: 1.7;
+  line-height: 1.75;
+  max-width: 40rem;
 }
 
 .star-divider {
@@ -596,23 +610,24 @@ main {
 
 .signup-form label {
   display: block;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 0.35rem;
-  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
 }
 
 .signup-form input {
   width: 100%;
-  min-height: 48px;
-  padding: 0.78rem 1rem;
-  border: 1px solid var(--parchment-shadow);
+  min-height: 50px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #b8b0a4;
   border-radius: 8px;
-  font: inherit;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.5;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.65);
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .signup-form input:focus {
@@ -623,8 +638,8 @@ main {
 }
 
 .signup-form input::placeholder {
-  color: #9aa3b2;
-  font-style: italic;
+  color: #6b7280;
+  font-style: normal;
 }
 
 .signup-form .btn {
@@ -634,18 +649,20 @@ main {
 
 .signup-note {
   margin-top: 1.1rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-soft);
+  max-width: 42rem;
 }
 
 .signup-note a {
   color: var(--accent);
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .signup-note a:hover {
-  text-decoration: underline;
+  color: var(--navy-deep);
 }
 
 .about-body p + p {
@@ -664,9 +681,8 @@ main {
 }
 
 .site-footer p {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   color: var(--text-soft);
-  letter-spacing: 0.04em;
 }
 
 .site-footer::before {
@@ -706,6 +722,11 @@ main {
 
   .site-nav.is-open {
     display: block;
+    background: var(--navy-deep);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
   }
 
   .site-nav ul {
