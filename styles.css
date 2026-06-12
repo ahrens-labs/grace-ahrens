@@ -40,12 +40,12 @@ body {
   font-family: var(--font-body);
   font-size: 1.125rem;
   line-height: 1.8;
-  color: var(--text);
+  color: var(--text-on-dark-muted);
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(19, 35, 63, 0.12), transparent 58%),
-    radial-gradient(ellipse 45% 35% at 0% 55%, rgba(19, 35, 63, 0.06), transparent 55%),
-    radial-gradient(ellipse 45% 35% at 100% 75%, rgba(19, 35, 63, 0.05), transparent 55%),
-    linear-gradient(175deg, #ebe6de 0%, var(--parchment-light) 38%, #ebe4da 100%);
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.18), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(30, 51, 88, 0.12), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 100% 60%, rgba(30, 51, 88, 0.1), transparent 50%),
+    linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -137,12 +137,9 @@ a {
   z-index: 100;
   color: #fff;
   padding: 1.6rem 1.25rem 1.35rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 28%),
-    linear-gradient(135deg, var(--ink) 0%, var(--navy) 42%, var(--navy-mid) 100%);
-  box-shadow:
-    0 4px 30px rgba(8, 15, 28, 0.45),
-    inset 0 -1px 0 rgba(210, 218, 232, 0.15);
+  background: rgba(8, 15, 28, 0.55);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 -1px 0 rgba(210, 218, 232, 0.18);
   overflow: hidden;
 }
 
@@ -336,11 +333,14 @@ main {
 
 .section-card {
   position: relative;
-  background: #faf8f4;
-  border: 1px solid #cfc6b8;
-  border-radius: 4px;
+  color: var(--text);
+  background: var(--parchment-light);
+  border: 1px solid #d4cbbf;
+  border-radius: 6px;
   padding: clamp(2rem, 5vw, 2.85rem);
-  box-shadow: 0 18px 40px rgba(19, 35, 63, 0.08);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .section-card::before,
@@ -372,82 +372,13 @@ main {
 }
 
 .section-card--featured {
-  border-color: #c4b9a8;
+  border-color: #cfc6b8;
   background: #fffdf9;
 }
 
 .section-card--newsletter {
-  background:
-    linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 55%, var(--navy-mid) 100%);
-  border-color: rgba(210, 218, 232, 0.2);
-  color: #fff;
-  overflow: hidden;
-}
-
-.section-card--newsletter::before,
-.section-card--newsletter::after {
-  opacity: 0.75;
-}
-
-.section-card--newsletter::before {
-  box-shadow: 0 0 14px rgba(238, 242, 250, 0.35);
-}
-
-.section-card--newsletter h1,
-.section-card--newsletter h2 {
-  color: var(--silver-bright);
-}
-
-.section-card--newsletter .kicker {
-  color: var(--moon);
-}
-
-.section-card--newsletter .kicker::before,
-.section-card--newsletter .kicker::after {
-  background: linear-gradient(180deg, var(--silver-bright), var(--moon));
-}
-
-.section-card--newsletter p,
-.section-card--newsletter .signup-note {
-  color: var(--text-on-dark-muted);
-}
-
-.section-card--newsletter .signup-form label {
-  color: var(--text-on-dark);
-  font-size: 0.98rem;
-}
-
-.section-card--newsletter .signup-form input {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(228, 234, 244, 0.45);
-  color: var(--text-on-dark);
-  font-size: 1.05rem;
-}
-
-.section-card--newsletter .signup-form input::placeholder {
-  color: rgba(220, 228, 240, 0.65);
-  font-style: normal;
-}
-
-.section-card--newsletter .signup-form input:focus {
-  border-color: var(--moon);
-  box-shadow: 0 0 0 3px rgba(184, 201, 228, 0.2);
-}
-
-.section-card--newsletter .signup-note a {
-  color: var(--text-on-dark);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.section-card--newsletter .btn-primary {
-  background: linear-gradient(135deg, var(--silver-bright), var(--moon));
-  color: var(--navy-deep);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-}
-
-.section-card--newsletter .btn-primary:hover {
-  background: linear-gradient(135deg, #fff, var(--silver-bright));
+  background: #f5f0e8;
+  border-color: #d8cfc2;
 }
 
 .kicker {
@@ -518,8 +449,6 @@ main {
   justify-content: center;
   gap: 1rem;
   margin: 2.75rem 0 0;
-  color: var(--navy-mid);
-  opacity: 0.55;
 }
 
 .star-divider::before,
@@ -527,7 +456,7 @@ main {
   content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--moon), transparent);
+  background: linear-gradient(90deg, transparent, rgba(210, 218, 232, 0.35), transparent);
 }
 
 .star-divider span {
@@ -658,13 +587,13 @@ main {
   z-index: 1;
   padding: 2rem 1.25rem;
   text-align: center;
-  background: linear-gradient(180deg, transparent, rgba(19, 35, 63, 0.06));
-  border-top: 1px solid rgba(184, 201, 228, 0.35);
+  background: transparent;
+  border-top: 1px solid rgba(210, 218, 232, 0.2);
 }
 
 .site-footer p {
   font-size: 0.95rem;
-  color: var(--text-soft);
+  color: var(--text-on-dark-muted);
 }
 
 .site-footer::before {

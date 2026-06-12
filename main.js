@@ -43,7 +43,7 @@ function initStars() {
     const left = between(rng, 1.5, 98.5);
     const rotate = between(rng, -28, 28) + between(rng, 0, 4) * 90;
     const scale = between(rng, 0.45, 1.35);
-    const opacity = between(rng, 0.12, 0.62);
+    const opacity = between(rng, 0.25, 0.85);
     const twinkle = rng() > 0.62;
     const float = !twinkle && rng() > 0.78;
 
