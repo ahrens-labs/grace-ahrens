@@ -1,3 +1,12 @@
+import {
+  hasSubscriberStorage,
+  registerSubscriber,
+} from "../_lib/subscribers.js";
+import {
+  hasEmailBinding,
+  sendSubscriptionConfirmationEmail,
+} from "../_lib/email.js";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NAME_LENGTH = 100;
 
@@ -28,32 +37,6 @@ async function verifyTurnstile(secret, token, request) {
 
   const result = await response.json();
   return result.success === true;
-}
-
-async function subscribeButtondown(apiKey, email, name) {
-  const response = await fetch("https://api.buttondown.com/v1/subscribers", {
-    method: "POST",
-    headers: {
-      Authorization: `Token ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email_address: email,
-      metadata: { name },
-    }),
-  });
-
-  if (response.ok) {
-    return { ok: true };
-  }
-
-  const data = await response.json().catch(() => ({}));
-
-  if (response.status === 409 || data?.code === "email_already_exists") {
-    return { ok: true, alreadySubscribed: true };
-  }
-
-  return { ok: false };
 }
 
 export async function onRequestPost(context) {
@@ -103,11 +86,11 @@ export async function onRequestPost(context) {
     }
   }
 
-  if (!env.BUTTONDOWN_API_KEY) {
+  if (!hasSubscriberStorage(env) || !hasEmailBinding(env)) {
     return json({ error: "Newsletter signup is not configured yet." }, 503);
   }
 
-  const result = await subscribeButtondown(env.BUTTONDOWN_API_KEY, email, name);
+  const result = await registerSubscriber(env, email, name);
   if (!result.ok) {
     return json({ error: "Unable to subscribe right now. Please try again later." }, 500);
   }
@@ -119,8 +102,17 @@ export async function onRequestPost(context) {
     });
   }
 
+  const origin = new URL(request.url).origin;
+  const confirmUrl =
+    `${origin}/api/confirm-subscribe?token=${encodeURIComponent(result.token)}`;
+  const emailResult = await sendSubscriptionConfirmationEmail(env, confirmUrl, email, name);
+
+  if (!emailResult.ok) {
+    return json({ error: "Unable to send confirmation email right now. Please try again later." }, 500);
+  }
+
   return json({
     success: true,
-    message: "You are on the list. Check your inbox to confirm your subscription.",
+    message: "Almost there — check your inbox to confirm your subscription.",
   });
 }

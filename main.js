@@ -241,8 +241,26 @@ function initSignupForms() {
   });
 }
 
+function showNewsletterConfirmation() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("confirmed");
+  if (!status) return;
+
+  const form = document.querySelector(".section-card--newsletter .signup-form");
+  if (!form) return;
+
+  if (status === "1") {
+    setFormMessage(form, "You are confirmed and on the list. Thank you!", "success");
+  } else {
+    setFormMessage(form, "That confirmation link is invalid or expired. Please sign up again.", "error");
+  }
+
+  window.history.replaceState({}, "", window.location.pathname);
+}
+
 async function initNewsletter() {
   initSignupForms();
+  showNewsletterConfirmation();
 
   const config = await loadTurnstileConfig();
   turnstileRequired = config.required;

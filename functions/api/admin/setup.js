@@ -80,7 +80,7 @@ export async function onRequestPost(context) {
 
   if (!emailResult.ok) {
     return json({
-      error: "Could not send confirmation email. Check that Resend is configured.",
+      error: "Could not send confirmation email. Check that Cloudflare Email is configured.",
     }, 500);
   }
 

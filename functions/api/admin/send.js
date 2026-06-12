@@ -1,43 +1,23 @@
-import { isAdmin, json } from "../../_lib/admin-auth.js";
+import { getSessionAdmin, json } from "../../_lib/admin-auth.js";
+import {
+  hasSubscriberStorage,
+  listConfirmedSubscribers,
+  saveDraft,
+} from "../../_lib/subscribers.js";
+import { hasEmailBinding, sendNewsletterToList } from "../../_lib/email.js";
 
 const MAX_SUBJECT_LENGTH = 200;
 const MAX_BODY_LENGTH = 50000;
 
-async function createButtondownEmail(apiKey, subject, body, mode) {
-  const headers = {
-    Authorization: `Token ${apiKey}`,
-    "Content-Type": "application/json",
-    "X-API-Version": "2026-04-01",
-  };
-
-  const payload = {
-    subject,
-    body,
-    status: mode === "send" ? "about_to_send" : "draft",
-  };
-
-  if (mode === "send") {
-    headers["X-Buttondown-Live-Dangerously"] = "true";
-  }
-
-  const response = await fetch("https://api.buttondown.com/v1/emails", {
-    method: "POST",
-    headers,
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json().catch(() => ({}));
-  return { response, data };
-}
-
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  if (!(await isAdmin(request, env))) {
+  const session = await getSessionAdmin(request, env);
+  if (!session) {
     return json({ error: "Not authorized." }, 401);
   }
 
-  if (!env.BUTTONDOWN_API_KEY) {
+  if (!hasSubscriberStorage(env) || !hasEmailBinding(env)) {
     return json({ error: "Newsletter is not configured yet." }, 503);
   }
 
@@ -61,32 +41,51 @@ export async function onRequestPost(context) {
     return json({ error: "Please enter a message." }, 400);
   }
 
-  if (mode === "send" && confirm !== "SEND") {
-    return json({ error: 'Type SEND in the confirmation box to email your full list.' }, 400);
-  }
+  if (mode === "draft") {
+    await saveDraft(env, {
+      subject,
+      body: message,
+      savedAt: Date.now(),
+      savedBy: session.email,
+    });
 
-  const { response, data } = await createButtondownEmail(
-    env.BUTTONDOWN_API_KEY,
-    subject,
-    message,
-    mode
-  );
-
-  if (!response.ok) {
-    return json({ error: "Unable to save or send this email right now." }, 500);
-  }
-
-  if (mode === "send") {
     return json({
       success: true,
-      message: "Your newsletter is on its way to the full list.",
-      previewUrl: data.absolute_url || null,
+      message: "Draft saved. Come back anytime to finish and send.",
     });
   }
 
+  if (confirm !== "SEND") {
+    return json({ error: "Type SEND in the confirmation box to email your full list." }, 400);
+  }
+
+  const subscribers = await listConfirmedSubscribers(env);
+  if (!subscribers.length) {
+    return json({ error: "There are no confirmed subscribers to email yet." }, 400);
+  }
+
+  const sendResult = await sendNewsletterToList(env, subject, message, subscribers);
+  if (!sendResult.ok) {
+    const detail = sendResult.sent
+      ? ` Sent ${sendResult.sent} before the error.`
+      : "";
+    return json({
+      error: `Unable to send this newsletter right now.${detail}`,
+    }, 500);
+  }
+
+  await saveDraft(env, {
+    subject,
+    body: message,
+    savedAt: Date.now(),
+    savedBy: session.email,
+    lastSentAt: Date.now(),
+    recipientCount: sendResult.sent,
+  });
+
   return json({
     success: true,
-    message: "Draft saved. Review it before sending to your list.",
-    previewUrl: data.absolute_url || null,
+    message: `Your newsletter was sent to ${sendResult.sent} subscriber${sendResult.sent === 1 ? "" : "s"}.`,
+    recipientCount: sendResult.sent,
   });
 }

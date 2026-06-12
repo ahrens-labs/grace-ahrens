@@ -64,10 +64,18 @@ async function loadSession() {
     userEl.textContent = `Signed in as ${data.email}`;
 
     if (typeof data.subscriberCount === "number") {
-      countEl.textContent = `${data.subscriberCount} subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
+      countEl.textContent = `${data.subscriberCount} confirmed subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
     } else {
       countEl.textContent = "Subscriber count unavailable";
     }
+
+    if (data.draft) {
+      const subjectInput = document.getElementById("email-subject");
+      const bodyInput = document.getElementById("email-body");
+      if (subjectInput && !subjectInput.value) subjectInput.value = data.draft.subject || "";
+      if (bodyInput && !bodyInput.value) bodyInput.value = data.draft.body || "";
+    }
+
     showPanel("compose-panel");
     return;
   }
@@ -232,11 +240,7 @@ async function initAdmin() {
         return;
       }
 
-      let message = data.message || "Done.";
-      if (data.previewUrl) {
-        message += ` Preview: ${data.previewUrl}`;
-      }
-      setMessage(composeMessage, message, "success");
+      setMessage(composeMessage, data.message || "Done.", "success");
 
       if (mode === "send") {
         composeForm.reset();
