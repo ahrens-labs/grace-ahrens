@@ -10,15 +10,49 @@ function getFromEmailOnly(env) {
   return match ? match[1] : from;
 }
 
+function getApiToken(env) {
+  return env.CLOUDFLARE_EMAIL_API_TOKEN || env.CLOUDFLARE_API_TOKEN || "";
+}
+
 export function hasEmailBinding(env) {
-  return Boolean(env.EMAIL);
+  return Boolean(env.EMAIL) || Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID);
+}
+
+async function sendViaBinding(env, payload) {
+  const result = await env.EMAIL.send(payload);
+  return { ok: true, messageId: result.messageId };
+}
+
+async function sendViaRestApi(env, payload) {
+  const token = getApiToken(env);
+  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
+
+  if (!token || !accountId) {
+    return { ok: false, reason: "missing_email_config" };
+  }
+
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/email/sending/send`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.success) {
+    const message = data.errors?.[0]?.message || "send_failed";
+    return { ok: false, reason: message };
+  }
+
+  return { ok: true };
 }
 
 export async function sendEmail(env, { to, subject, html, text, bcc }) {
-  if (!env.EMAIL) {
-    return { ok: false, reason: "missing_email_binding" };
-  }
-
   const payload = {
     from: getFromAddress(env),
     subject,
@@ -29,16 +63,19 @@ export async function sendEmail(env, { to, subject, html, text, bcc }) {
   if (html) payload.html = html;
   if (text) payload.text = text;
 
-  try {
-    const result = await env.EMAIL.send(payload);
-    return { ok: true, messageId: result.messageId };
-  } catch (error) {
-    return {
-      ok: false,
-      reason: error.code || "send_failed",
-      message: error.message,
-    };
+  if (env.EMAIL) {
+    try {
+      return await sendViaBinding(env, payload);
+    } catch (error) {
+      return {
+        ok: false,
+        reason: error.code || "send_failed",
+        message: error.message,
+      };
+    }
   }
+
+  return sendViaRestApi(env, payload);
 }
 
 export async function sendAdminConfirmationEmail(env, confirmUrl, toEmail) {
