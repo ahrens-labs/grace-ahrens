@@ -1,0 +1,65 @@
+.admin-page .admin-main {
+  padding: clamp(2rem, 6vw, 4rem) 1.25rem;
+}
+
+.admin-container {
+  width: min(100%, 860px);
+}
+
+.admin-card h1 {
+  max-width: none;
+}
+
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-meta {
+  color: var(--text-soft);
+  font-size: 0.98rem;
+  margin-top: 0.35rem;
+}
+
+.admin-compose textarea {
+  width: 100%;
+  min-height: 280px;
+  padding: 0.85rem 1rem;
+  border: 1px solid #b8b0a4;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  background: #fff;
+  resize: vertical;
+}
+
+.admin-compose textarea:focus {
+  outline: none;
+  border-color: var(--navy-glow);
+  box-shadow: 0 0 0 3px rgba(45, 80, 136, 0.14);
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-actions .btn {
+  margin-top: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-toolbar {
+    flex-direction: column;
+  }
+
+  .admin-actions .btn {
+    width: 100%;
+  }
+}

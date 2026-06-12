@@ -512,6 +512,22 @@ main {
   box-shadow: 0 12px 28px rgba(19, 35, 63, 0.38);
 }
 
+.btn-secondary {
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #b8b0a4;
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  border-color: #8f8678;
+  box-shadow: 0 6px 16px rgba(19, 35, 63, 0.1);
+}
+
+.btn-secondary::after {
+  content: none;
+}
+
 /* Signup */
 
 .signup-form {

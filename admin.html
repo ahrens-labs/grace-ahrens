@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Newsletter Admin — Grace Ahrens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+  <div class="page-stars" aria-hidden="true"></div>
+
+  <main class="admin-main">
+    <div class="container admin-container">
+      <section id="login-panel" class="section-card admin-card" hidden>
+        <p class="kicker">Private</p>
+        <h1>Newsletter admin</h1>
+        <p>Sign in to draft or send updates to your mailing list.</p>
+        <form id="login-form" class="signup-form" novalidate>
+          <div>
+            <label for="admin-password">Password</label>
+            <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
+          </div>
+          <p class="form-message" id="login-message" role="status" aria-live="polite" hidden></p>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+      </section>
+
+      <section id="compose-panel" class="section-card admin-card" hidden>
+        <div class="admin-toolbar">
+          <div>
+            <p class="kicker">Newsletter admin</p>
+            <h1>Compose an update</h1>
+            <p id="subscriber-count" class="admin-meta">Loading subscriber count…</p>
+          </div>
+          <button type="button" id="logout-button" class="btn btn-secondary">Sign out</button>
+        </div>
+
+        <form id="compose-form" class="signup-form admin-compose" novalidate>
+          <div>
+            <label for="email-subject">Subject</label>
+            <input type="text" id="email-subject" name="subject" maxlength="200" required>
+          </div>
+          <div>
+            <label for="email-body">Message</label>
+            <textarea id="email-body" name="body" rows="14" maxlength="50000" placeholder="Write your newsletter here. Markdown is supported." required></textarea>
+          </div>
+          <div id="send-confirm-wrap" hidden>
+            <label for="send-confirm">Type SEND to email your full list</label>
+            <input type="text" id="send-confirm" name="confirm" autocomplete="off" placeholder="SEND">
+          </div>
+          <p class="form-message" id="compose-message" role="status" aria-live="polite" hidden></p>
+          <div class="admin-actions">
+            <button type="submit" class="btn btn-secondary" data-mode="draft">Save draft</button>
+            <button type="button" class="btn btn-primary" id="prepare-send-button">Send to full list</button>
+            <button type="submit" class="btn btn-primary" id="send-button" data-mode="send" hidden>Confirm send</button>
+          </div>
+        </form>
+        <p class="signup-privacy">
+          Drafts can be previewed in Buttondown before sending. Sending goes to every confirmed subscriber.
+        </p>
+        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+      </section>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
