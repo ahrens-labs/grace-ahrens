@@ -74,9 +74,6 @@ export async function onRequestPost(context) {
   const token = createToken();
   const passwordHash = await hashPassword(password, env.SESSION_SECRET);
   const exp = Date.now() + 60 * 60 * 1000;
-
-  await savePendingSetup(env, email, { token, passwordHash, exp });
-
   const origin = new URL(request.url).origin;
   const confirmUrl =
     `${origin}/api/admin/confirm-setup?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
@@ -98,6 +95,8 @@ export async function onRequestPost(context) {
         : "Could not send confirmation email. Check that Cloudflare Email Sending is set up for graceahrens.com.",
     }, 500);
   }
+
+  await savePendingSetup(env, email, { token, passwordHash, exp });
 
   return json({
     success: true,
