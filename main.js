@@ -112,6 +112,142 @@ function initYear() {
   if (year) year.textContent = new Date().getFullYear();
 }
 
+const turnstileWidgets = new WeakMap();
+
+async function loadTurnstileSiteKey() {
+  try {
+    const response = await fetch("/api/config");
+    if (!response.ok) return "";
+    const data = await response.json();
+    return data.turnstileSiteKey || "";
+  } catch {
+    return "";
+  }
+}
+
+function renderTurnstileWidgets(siteKey) {
+  if (!siteKey || !window.turnstile) return;
+
+  document.querySelectorAll("[data-turnstile]").forEach((container) => {
+    if (turnstileWidgets.has(container)) return;
+
+    const widgetId = window.turnstile.render(container, {
+      sitekey: siteKey,
+      theme: "light",
+    });
+    turnstileWidgets.set(container, widgetId);
+  });
+}
+
+function waitForTurnstile() {
+  return new Promise((resolve) => {
+    if (window.turnstile) {
+      resolve();
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      if (window.turnstile) {
+        window.clearInterval(interval);
+        resolve();
+      }
+    }, 100);
+
+    window.setTimeout(() => {
+      window.clearInterval(interval);
+      resolve();
+    }, 8000);
+  });
+}
+
+function setFormMessage(form, text, type) {
+  const message = form.querySelector(".form-message");
+  if (!message) return;
+
+  message.hidden = !text;
+  message.textContent = text;
+  message.classList.remove("form-message--error", "form-message--success");
+  if (type) message.classList.add(`form-message--${type}`);
+}
+
+function initSignupForms() {
+  document.querySelectorAll(".signup-form").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setFormMessage(form, "");
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      const nameInput = form.querySelector('input[name="name"]');
+      const emailInput = form.querySelector('input[name="email"]');
+      const companyInput = form.querySelector('input[name="company"]');
+      const turnstileContainer = form.querySelector("[data-turnstile]");
+      const widgetId = turnstileContainer ? turnstileWidgets.get(turnstileContainer) : null;
+
+      const name = nameInput?.value.trim() || "";
+      const email = emailInput?.value.trim() || "";
+      const company = companyInput?.value.trim() || "";
+      const turnstileToken = widgetId != null ? window.turnstile.getResponse(widgetId) : "";
+
+      if (!name) {
+        setFormMessage(form, "Please enter your name.", "error");
+        nameInput?.focus();
+        return;
+      }
+
+      if (!email) {
+        setFormMessage(form, "Please enter your email address.", "error");
+        emailInput?.focus();
+        return;
+      }
+
+      if (!turnstileToken) {
+        setFormMessage(form, "Please complete the security check below.", "error");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Signing up…";
+
+      try {
+        const response = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, company, turnstileToken }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          setFormMessage(form, data.error || "Something went wrong. Please try again.", "error");
+          if (widgetId != null) window.turnstile.reset(widgetId);
+          return;
+        }
+
+        setFormMessage(form, data.message || "You are on the list. Thank you!", "success");
+        form.reset();
+        if (widgetId != null) window.turnstile.reset(widgetId);
+      } catch {
+        setFormMessage(form, "Network error. Please try again.", "error");
+        if (widgetId != null) window.turnstile.reset(widgetId);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Sign up";
+      }
+    });
+  });
+}
+
+async function initNewsletter() {
+  initSignupForms();
+
+  const siteKey = await loadTurnstileSiteKey();
+  if (!siteKey) return;
+
+  await waitForTurnstile();
+  renderTurnstileWidgets(siteKey);
+}
+
 initStars();
 initNav();
 initYear();
+initNewsletter();

@@ -48,17 +48,26 @@
           behind the scenes. I won&apos;t flood your inbox — only write when I have something
           I&apos;m genuinely excited to tell you.
         </p>
-        <form class="signup-form" action="mailto:grace@graceahrens.com" method="post" enctype="text/plain">
+        <form class="signup-form" novalidate>
+          <div class="honeypot" aria-hidden="true">
+            <label for="newsletter-company">Company</label>
+            <input type="text" id="newsletter-company" name="company" tabindex="-1" autocomplete="off">
+          </div>
           <div>
             <label for="newsletter-name">Name</label>
-            <input type="text" id="newsletter-name" name="name" placeholder="Your name" required>
+            <input type="text" id="newsletter-name" name="name" placeholder="Your name" autocomplete="name" required>
           </div>
           <div>
             <label for="newsletter-email">Email</label>
-            <input type="email" id="newsletter-email" name="email" placeholder="you@example.com" required>
+            <input type="email" id="newsletter-email" name="email" placeholder="you@example.com" autocomplete="email" required>
           </div>
+          <div class="turnstile-wrap" data-turnstile></div>
+          <p class="form-message" role="status" aria-live="polite" hidden></p>
           <button type="submit" class="btn btn-primary">Sign up</button>
         </form>
+        <p class="signup-privacy">
+          Your email is stored securely and used only for newsletter updates from Grace.
+        </p>
         <p class="signup-note">
           Questions? Email me at
           <a href="mailto:grace@graceahrens.com">grace@graceahrens.com</a>.
@@ -71,6 +80,7 @@
     <p>&copy; <span id="year"></span> Grace Ahrens. All rights reserved.</p>
   </footer>
 
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script src="main.js"></script>
 </body>
 </html>

@@ -577,6 +577,45 @@ main {
   color: var(--navy-deep);
 }
 
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.turnstile-wrap {
+  margin-top: 0.25rem;
+}
+
+.form-message {
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.form-message--error {
+  color: #9b1c1c;
+}
+
+.form-message--success {
+  color: #1f5a3a;
+}
+
+.signup-privacy {
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  max-width: 42rem;
+}
+
+.signup-form button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+}
+
 .about-body p + p {
   margin-top: 1rem;
 }
