@@ -1,58 +1,90 @@
-function initConstellation() {
-  const container = document.querySelector(".page-stars");
-  if (!container) return;
+function createRng(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(state ^ (state >>> 15), state | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("class", "constellation");
-  svg.setAttribute("aria-hidden", "true");
-  svg.innerHTML = `
-    <line x1="12%" y1="18%" x2="22%" y2="28%" stroke="rgba(210,218,232,0.2)" stroke-width="1"/>
-    <line x1="22%" y1="28%" x2="18%" y2="42%" stroke="rgba(210,218,232,0.15)" stroke-width="1"/>
-    <line x1="78%" y1="22%" x2="88%" y2="32%" stroke="rgba(210,218,232,0.2)" stroke-width="1"/>
-    <line x1="88%" y1="32%" x2="84%" y2="48%" stroke="rgba(210,218,232,0.15)" stroke-width="1"/>
-    <line x1="6%" y1="68%" x2="14%" y2="78%" stroke="rgba(210,218,232,0.12)" stroke-width="1"/>
-    <line x1="86%" y1="72%" x2="94%" y2="82%" stroke="rgba(210,218,232,0.12)" stroke-width="1"/>
-  `;
-  container.appendChild(svg);
+function pick(rng, items) {
+  return items[Math.floor(rng() * items.length)];
+}
+
+function between(rng, min, max) {
+  return min + rng() * (max - min);
 }
 
 function initStars() {
   const container = document.querySelector(".page-stars");
   if (!container) return;
 
-  const items = [
-    { type: "star--4", top: "6%", left: "5%", opacity: 0.5, twinkle: true, delay: 0 },
-    { type: "star--8", top: "12%", left: "90%", opacity: 0.65, twinkle: true, delay: 1.2, float: true },
-    { type: "star--4", top: "24%", left: "94%", opacity: 0.4, delay: 2.1 },
-    { type: "sparkle sparkle--flare", top: "20%", left: "3%", opacity: 0.55, rotate: 14, twinkle: true, delay: 0.8 },
-    { type: "star--8", top: "38%", left: "2%", opacity: 0.45, float: true, delay: 1.5 },
-    { type: "sparkle sparkle--dot", top: "34%", left: "96%", opacity: 0.7, twinkle: true, delay: 2.4 },
-    { type: "star--4", top: "52%", left: "7%", opacity: 0.35, delay: 0.4 },
-    { type: "sparkle sparkle--flare", top: "58%", left: "91%", opacity: 0.5, rotate: -10, twinkle: true, delay: 1.8 },
-    { type: "star--8", top: "70%", left: "4%", opacity: 0.55, float: true, delay: 2.8 },
-    { type: "star--4", top: "76%", left: "92%", opacity: 0.42, twinkle: true, delay: 0.6 },
-    { type: "sparkle sparkle--dot", top: "84%", left: "10%", opacity: 0.6, delay: 1.1 },
-    { type: "star--8", top: "88%", left: "80%", opacity: 0.48, twinkle: true, delay: 2.2 },
-    { type: "sparkle sparkle--flare", top: "46%", left: "97%", opacity: 0.38, rotate: 6, delay: 1.4 },
-    { type: "sparkle sparkle--dot", top: "16%", left: "70%", opacity: 0.45, twinkle: true, delay: 2.6 },
-    { type: "star--4", top: "64%", left: "76%", opacity: 0.36, float: true, delay: 0.9 },
-    { type: "star--8", top: "30%", left: "48%", opacity: 0.2, twinkle: true, delay: 3.1 },
-    { type: "sparkle sparkle--dot", top: "44%", left: "52%", opacity: 0.18, delay: 1.7 },
-    { type: "star--4", top: "92%", left: "45%", opacity: 0.22, twinkle: true, delay: 2.9 },
+  const rng = createRng(20260612);
+  const count = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 38 : 62;
+  const types = [
+    { kind: "dot", weight: 5 },
+    { kind: "star-4", weight: 3 },
+    { kind: "star-8", weight: 2 },
+    { kind: "flare", weight: 2 },
   ];
 
-  items.forEach((item) => {
-    const el = document.createElement("span");
-    el.className = item.type.includes("sparkle") ? item.type : `star ${item.type}`;
-    if (item.twinkle) el.classList.add("twinkle");
-    if (item.float) el.classList.add("float");
-    el.style.top = item.top;
-    el.style.left = item.left;
-    if (item.rotate) el.style.transform = `rotate(${item.rotate}deg)`;
-    if (item.delay != null) el.style.animationDelay = `${item.delay}s`;
-    el.setAttribute("aria-hidden", "true");
-    container.appendChild(el);
+  const weighted = [];
+  types.forEach((entry) => {
+    for (let i = 0; i < entry.weight; i += 1) weighted.push(entry.kind);
   });
+
+  for (let i = 0; i < count; i += 1) {
+    const kind = pick(rng, weighted);
+    const el = document.createElement("span");
+    el.setAttribute("aria-hidden", "true");
+
+    const top = between(rng, 1.5, 98.5);
+    const left = between(rng, 1.5, 98.5);
+    const rotate = between(rng, -28, 28) + between(rng, 0, 4) * 90;
+    const scale = between(rng, 0.45, 1.35);
+    const opacity = between(rng, 0.12, 0.62);
+    const twinkle = rng() > 0.62;
+    const float = !twinkle && rng() > 0.78;
+
+    el.style.top = `${top}%`;
+    el.style.left = `${left}%`;
+    el.style.opacity = opacity.toFixed(2);
+    el.style.setProperty("--star-rotate", `${rotate.toFixed(1)}deg`);
+    el.style.setProperty("--star-scale", scale.toFixed(2));
+    el.style.transform = `rotate(var(--star-rotate)) scale(var(--star-scale))`;
+
+    if (kind === "dot") {
+      el.className = "sparkle sparkle--dot";
+      const size = between(rng, 2, 4.5);
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+    } else if (kind === "flare") {
+      el.className = "sparkle sparkle--flare";
+      el.style.height = `${between(rng, 10, 22).toFixed(1)}px`;
+      el.style.width = `${between(rng, 1.2, 2.4).toFixed(1)}px`;
+    } else {
+      el.className = `star star--${kind === "star-8" ? "8" : "4"}`;
+      const width = between(rng, 4.5, kind === "star-8" ? 11 : 9);
+      const height = width * between(rng, 2.4, 3.4);
+      el.style.width = `${width.toFixed(1)}px`;
+      el.style.height = `${height.toFixed(1)}px`;
+    }
+
+    if (twinkle) {
+      el.classList.add("twinkle");
+      el.style.animationDuration = `${between(rng, 3.2, 7.5).toFixed(1)}s`;
+      el.style.animationDelay = `${between(rng, 0, 6).toFixed(1)}s`;
+    }
+
+    if (float) {
+      el.classList.add("float");
+      el.style.animationDuration = `${between(rng, 8, 16).toFixed(1)}s`;
+      el.style.animationDelay = `${between(rng, 0, 5).toFixed(1)}s`;
+    }
+
+    container.appendChild(el);
+  }
 }
 
 function initNav() {
@@ -80,7 +112,6 @@ function initYear() {
   if (year) year.textContent = new Date().getFullYear();
 }
 
-initConstellation();
 initStars();
 initNav();
 initYear();
