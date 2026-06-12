@@ -85,6 +85,8 @@ export async function onRequestPost(context) {
         ? "Email credentials are not set on this site."
         : emailResult.reason === "E_SENDER_NOT_VERIFIED" || emailResult.reason === "E_SENDER_DOMAIN_NOT_AVAILABLE"
           ? "graceahrens.com is not onboarded for Email Sending yet."
+          : emailResult.reason === "E_RECIPIENT_NOT_ALLOWED"
+            ? `${email} must be verified under Cloudflare Email Routing destination addresses.`
           : emailResult.reason === "missing_email_binding"
             ? "The email worker is not deployed."
             : null;
