@@ -7,7 +7,7 @@
   <title>About — Grace Ahrens</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,7 +19,12 @@
       <span></span>
     </button>
     <div class="header-inner">
-      <a href="index.html" class="site-title">Grace Ahrens</a>
+      <div class="title-wrap">
+        <span class="title-star title-star--left" aria-hidden="true"></span>
+        <a href="index.html" class="site-title">Grace Ahrens</a>
+        <span class="title-star title-star--right" aria-hidden="true"></span>
+      </div>
+      <p class="site-tagline">Fantasy Author</p>
       <nav id="site-nav" class="site-nav">
         <ul>
           <li><a href="index.html">Home</a></li>
@@ -32,7 +37,8 @@
 
   <main>
     <div class="container">
-      <section class="section-card about-body">
+      <section class="section-card section-card--featured about-body">
+        <p class="kicker">The author</p>
         <h1>About Grace</h1>
         <p class="lead">
           <!-- Replace with your longer bio -->
