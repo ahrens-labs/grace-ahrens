@@ -35,7 +35,15 @@ async function importHmacKey(secret) {
   );
 }
 
-export async function verifyPassword(input, expected) {
+export async function hashPassword(password, secret) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    encoder().encode(`${secret}:${password}`)
+  );
+  return toBase64Url(digest);
+}
+
+export async function verifyPasswordPlain(input, expected) {
   if (!input || !expected) return false;
 
   const [inputHash, expectedHash] = await Promise.all([

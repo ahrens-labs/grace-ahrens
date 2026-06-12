@@ -6,37 +6,65 @@ function setMessage(element, text, type) {
   if (type) element.classList.add(`form-message--${type}`);
 }
 
-function showPanel(loginVisible, composeVisible) {
-  document.getElementById("login-panel").hidden = !loginVisible;
-  document.getElementById("compose-panel").hidden = !composeVisible;
+function hideAllPanels() {
+  ["setup-panel", "pending-panel", "login-panel", "compose-panel"].forEach((id) => {
+    document.getElementById(id).hidden = true;
+  });
+}
+
+function showPanel(id) {
+  hideAllPanels();
+  document.getElementById(id).hidden = false;
+}
+
+function handleSetupQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("setup");
+  const loginMessage = document.getElementById("login-message");
+
+  if (status === "confirmed") {
+    setMessage(loginMessage, "Admin password confirmed. You can sign in now.", "success");
+  } else if (status === "invalid") {
+    setMessage(loginMessage, "That confirmation link is invalid or expired. Request a new one.", "error");
+  }
+
+  if (status) {
+    window.history.replaceState({}, "", "admin.html");
+  }
 }
 
 async function loadSession() {
   const response = await fetch("/api/admin/session");
-  if (!response.ok) {
-    showPanel(true, false);
+  const data = await response.json().catch(() => ({}));
+
+  if (data.authenticated) {
+    const countEl = document.getElementById("subscriber-count");
+    if (typeof data.subscriberCount === "number") {
+      countEl.textContent = `${data.subscriberCount} subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
+    } else {
+      countEl.textContent = "Subscriber count unavailable";
+    }
+    showPanel("compose-panel");
     return;
   }
 
-  const data = await response.json();
-  if (!data.authenticated) {
-    showPanel(true, false);
+  if (data.needsSetup) {
+    if (data.setupPending) {
+      showPanel("pending-panel");
+    } else {
+      showPanel("setup-panel");
+    }
     return;
   }
 
-  const countEl = document.getElementById("subscriber-count");
-  if (typeof data.subscriberCount === "number") {
-    countEl.textContent = `${data.subscriberCount} subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
-  } else {
-    countEl.textContent = "Subscriber count unavailable";
-  }
-
-  showPanel(false, true);
+  showPanel("login-panel");
 }
 
 async function initAdmin() {
+  const setupForm = document.getElementById("setup-form");
   const loginForm = document.getElementById("login-form");
   const composeForm = document.getElementById("compose-form");
+  const setupMessage = document.getElementById("setup-message");
   const loginMessage = document.getElementById("login-message");
   const composeMessage = document.getElementById("compose-message");
   const logoutButton = document.getElementById("logout-button");
@@ -45,11 +73,44 @@ async function initAdmin() {
   const sendConfirmWrap = document.getElementById("send-confirm-wrap");
   const sendConfirmInput = document.getElementById("send-confirm");
 
-  if (!loginForm) return;
-
+  handleSetupQuery();
   await loadSession();
 
-  loginForm.addEventListener("submit", async (event) => {
+  setupForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setMessage(setupMessage, "");
+
+    const password = document.getElementById("setup-password").value;
+    const confirmPassword = document.getElementById("setup-confirm-password").value;
+    const submitButton = setupForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("/api/admin/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, confirmPassword }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setMessage(setupMessage, data.error || "Could not start setup.", "error");
+        return;
+      }
+
+      if (data.message) {
+        document.getElementById("pending-message").innerHTML =
+          `${data.message} Then come back here to sign in.`;
+      }
+      showPanel("pending-panel");
+    } catch {
+      setMessage(setupMessage, "Network error. Please try again.", "error");
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  loginForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     setMessage(loginMessage, "");
 
@@ -86,7 +147,7 @@ async function initAdmin() {
     prepareSendButton.hidden = false;
     sendConfirmInput.value = "";
     composeForm.reset();
-    showPanel(true, false);
+    await loadSession();
   });
 
   prepareSendButton?.addEventListener("click", () => {

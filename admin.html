@@ -16,6 +16,36 @@
 
   <main class="admin-main">
     <div class="container admin-container">
+      <section id="setup-panel" class="section-card admin-card" hidden>
+        <p class="kicker">First-time setup</p>
+        <h1>Create admin password</h1>
+        <p>Set a password for the newsletter admin area. We&apos;ll email a confirmation link to <strong>grace@graceahrens.com</strong> before it goes live.</p>
+        <form id="setup-form" class="signup-form" novalidate>
+          <div>
+            <label for="setup-password">New password</label>
+            <input type="password" id="setup-password" name="password" autocomplete="new-password" minlength="12" required>
+          </div>
+          <div>
+            <label for="setup-confirm-password">Confirm password</label>
+            <input type="password" id="setup-confirm-password" name="confirmPassword" autocomplete="new-password" minlength="12" required>
+          </div>
+          <p class="signup-privacy">Use at least 12 characters.</p>
+          <p class="form-message" id="setup-message" role="status" aria-live="polite" hidden></p>
+          <button type="submit" class="btn btn-primary">Set password &amp; send confirmation email</button>
+        </form>
+        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+      </section>
+
+      <section id="pending-panel" class="section-card admin-card" hidden>
+        <p class="kicker">Almost there</p>
+        <h1>Check your email</h1>
+        <p id="pending-message">
+          We sent a confirmation link to <strong>grace@graceahrens.com</strong>.
+          Click it to activate your admin password, then come back here to sign in.
+        </p>
+        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+      </section>
+
       <section id="login-panel" class="section-card admin-card" hidden>
         <p class="kicker">Private</p>
         <h1>Newsletter admin</h1>
