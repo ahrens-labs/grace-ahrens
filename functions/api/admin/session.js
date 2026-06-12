@@ -1,5 +1,8 @@
-import { isAdmin, json } from "../../_lib/admin-auth.js";
-import { getAdminState } from "../../_lib/admin-store.js";
+import { getSessionAdmin, json } from "../../_lib/admin-auth.js";
+import {
+  ALLOWED_ADMIN_EMAILS,
+  getAccountStates,
+} from "../../_lib/admin-store.js";
 
 async function getSubscriberCount(apiKey) {
   const response = await fetch("https://api.buttondown.com/v1/subscribers?limit=1", {
@@ -16,9 +19,9 @@ async function getSubscriberCount(apiKey) {
 
 export async function onRequestGet(context) {
   const { request, env } = context;
-  const authed = await isAdmin(request, env);
+  const session = await getSessionAdmin(request, env);
 
-  if (authed) {
+  if (session) {
     let subscriberCount = null;
     if (env.BUTTONDOWN_API_KEY) {
       subscriberCount = await getSubscriberCount(env.BUTTONDOWN_API_KEY);
@@ -26,15 +29,16 @@ export async function onRequestGet(context) {
 
     return json({
       authenticated: true,
+      email: session.email,
       subscriberCount,
     });
   }
 
-  const { needsSetup, setupPending } = await getAdminState(env);
+  const accounts = await getAccountStates(env);
 
   return json({
     authenticated: false,
-    needsSetup,
-    setupPending,
+    allowedAdmins: ALLOWED_ADMIN_EMAILS,
+    accounts,
   });
 }

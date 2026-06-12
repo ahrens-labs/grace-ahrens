@@ -16,11 +16,37 @@
 
   <main class="admin-main">
     <div class="container admin-container">
+      <section id="login-panel" class="section-card admin-card" hidden>
+        <p class="kicker">Private</p>
+        <h1>Newsletter admin</h1>
+        <p>Sign in to draft or send updates to your mailing list.</p>
+        <form id="login-form" class="signup-form" novalidate>
+          <div>
+            <label for="login-email">Account</label>
+            <select id="login-email" name="email" required></select>
+          </div>
+          <div>
+            <label for="admin-password">Password</label>
+            <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
+          </div>
+          <p class="form-message" id="login-message" role="status" aria-live="polite" hidden></p>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        <p class="signup-note">
+          <button type="button" class="text-button" id="show-setup-button">Create your password</button>
+          · <a href="index.html">Back to site</a>
+        </p>
+      </section>
+
       <section id="setup-panel" class="section-card admin-card" hidden>
         <p class="kicker">First-time setup</p>
-        <h1>Create admin password</h1>
-        <p>Set a password for the newsletter admin area. We&apos;ll email a confirmation link to <strong>grace@graceahrens.com</strong> before it goes live.</p>
+        <h1>Create your admin password</h1>
+        <p>Choose your account, set a password, and we&apos;ll email you a confirmation link before it goes live.</p>
         <form id="setup-form" class="signup-form" novalidate>
+          <div>
+            <label for="setup-email">Account</label>
+            <select id="setup-email" name="email" required></select>
+          </div>
           <div>
             <label for="setup-password">New password</label>
             <input type="password" id="setup-password" name="password" autocomplete="new-password" minlength="12" required>
@@ -33,32 +59,22 @@
           <p class="form-message" id="setup-message" role="status" aria-live="polite" hidden></p>
           <button type="submit" class="btn btn-primary">Set password &amp; send confirmation email</button>
         </form>
-        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+        <p class="signup-note">
+          <button type="button" class="text-button" id="show-login-button">Already have an account? Sign in</button>
+          · <a href="index.html">Back to site</a>
+        </p>
       </section>
 
       <section id="pending-panel" class="section-card admin-card" hidden>
         <p class="kicker">Almost there</p>
         <h1>Check your email</h1>
         <p id="pending-message">
-          We sent a confirmation link to <strong>grace@graceahrens.com</strong>.
+          We sent a confirmation link to your email address.
           Click it to activate your admin password, then come back here to sign in.
         </p>
-        <p class="signup-note"><a href="index.html">← Back to site</a></p>
-      </section>
-
-      <section id="login-panel" class="section-card admin-card" hidden>
-        <p class="kicker">Private</p>
-        <h1>Newsletter admin</h1>
-        <p>Sign in to draft or send updates to your mailing list.</p>
-        <form id="login-form" class="signup-form" novalidate>
-          <div>
-            <label for="admin-password">Password</label>
-            <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
-          </div>
-          <p class="form-message" id="login-message" role="status" aria-live="polite" hidden></p>
-          <button type="submit" class="btn btn-primary">Sign in</button>
-        </form>
-        <p class="signup-note"><a href="index.html">← Back to site</a></p>
+        <p class="signup-note">
+          <button type="button" class="text-button" id="pending-login-button">Back to sign in</button>
+        </p>
       </section>
 
       <section id="compose-panel" class="section-card admin-card" hidden>
@@ -66,6 +82,7 @@
           <div>
             <p class="kicker">Newsletter admin</p>
             <h1>Compose an update</h1>
+            <p id="admin-user" class="admin-meta"></p>
             <p id="subscriber-count" class="admin-meta">Loading subscriber count…</p>
           </div>
           <button type="button" id="logout-button" class="btn btn-secondary">Sign out</button>

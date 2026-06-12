@@ -1,3 +1,8 @@
+const ADMIN_EMAILS = [
+  "grace@graceahrens.com",
+  "caleb@ahrenslabs.com",
+];
+
 function setMessage(element, text, type) {
   if (!element) return;
   element.hidden = !text;
@@ -7,7 +12,7 @@ function setMessage(element, text, type) {
 }
 
 function hideAllPanels() {
-  ["setup-panel", "pending-panel", "login-panel", "compose-panel"].forEach((id) => {
+  ["login-panel", "setup-panel", "pending-panel", "compose-panel"].forEach((id) => {
     document.getElementById(id).hidden = true;
   });
 }
@@ -17,15 +22,31 @@ function showPanel(id) {
   document.getElementById(id).hidden = false;
 }
 
+function fillEmailSelect(select, selectedEmail) {
+  if (!select) return;
+  select.innerHTML = ADMIN_EMAILS.map((email) => {
+    const label = email === "grace@graceahrens.com" ? "Grace Ahrens" : "Caleb Ahrens";
+    return `<option value="${email}">${label} (${email})</option>`;
+  }).join("");
+  if (selectedEmail && ADMIN_EMAILS.includes(selectedEmail)) {
+    select.value = selectedEmail;
+  }
+}
+
 function handleSetupQuery() {
   const params = new URLSearchParams(window.location.search);
   const status = params.get("setup");
+  const email = params.get("email") || "grace@graceahrens.com";
   const loginMessage = document.getElementById("login-message");
+  const loginEmail = document.getElementById("login-email");
 
   if (status === "confirmed") {
-    setMessage(loginMessage, "Admin password confirmed. You can sign in now.", "success");
+    fillEmailSelect(loginEmail, email);
+    setMessage(loginMessage, `Password confirmed for ${email}. You can sign in now.`, "success");
+    showPanel("login-panel");
   } else if (status === "invalid") {
-    setMessage(loginMessage, "That confirmation link is invalid or expired. Request a new one.", "error");
+    setMessage(loginMessage, "That confirmation link is invalid or expired. Create your password again.", "error");
+    showPanel("setup-panel");
   }
 
   if (status) {
@@ -39,6 +60,9 @@ async function loadSession() {
 
   if (data.authenticated) {
     const countEl = document.getElementById("subscriber-count");
+    const userEl = document.getElementById("admin-user");
+    userEl.textContent = `Signed in as ${data.email}`;
+
     if (typeof data.subscriberCount === "number") {
       countEl.textContent = `${data.subscriberCount} subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
     } else {
@@ -48,14 +72,12 @@ async function loadSession() {
     return;
   }
 
-  if (data.needsSetup) {
-    if (data.setupPending) {
-      showPanel("pending-panel");
-    } else {
-      showPanel("setup-panel");
-    }
-    return;
-  }
+  const allowed = data.allowedAdmins || ADMIN_EMAILS;
+  ADMIN_EMAILS.length = 0;
+  ADMIN_EMAILS.push(...allowed);
+
+  fillEmailSelect(document.getElementById("login-email"));
+  fillEmailSelect(document.getElementById("setup-email"));
 
   showPanel("login-panel");
 }
@@ -73,13 +95,37 @@ async function initAdmin() {
   const sendConfirmWrap = document.getElementById("send-confirm-wrap");
   const sendConfirmInput = document.getElementById("send-confirm");
 
+  fillEmailSelect(document.getElementById("login-email"));
+  fillEmailSelect(document.getElementById("setup-email"));
+
   handleSetupQuery();
-  await loadSession();
+  if (!new URLSearchParams(window.location.search).get("setup")) {
+    await loadSession();
+  }
+
+  document.getElementById("show-setup-button")?.addEventListener("click", () => {
+    const loginEmail = document.getElementById("login-email").value;
+    fillEmailSelect(document.getElementById("setup-email"), loginEmail);
+    setMessage(setupMessage, "");
+    showPanel("setup-panel");
+  });
+
+  document.getElementById("show-login-button")?.addEventListener("click", () => {
+    const setupEmail = document.getElementById("setup-email").value;
+    fillEmailSelect(document.getElementById("login-email"), setupEmail);
+    setMessage(loginMessage, "");
+    showPanel("login-panel");
+  });
+
+  document.getElementById("pending-login-button")?.addEventListener("click", () => {
+    showPanel("login-panel");
+  });
 
   setupForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     setMessage(setupMessage, "");
 
+    const email = document.getElementById("setup-email").value;
     const password = document.getElementById("setup-password").value;
     const confirmPassword = document.getElementById("setup-confirm-password").value;
     const submitButton = setupForm.querySelector('button[type="submit"]');
@@ -89,7 +135,7 @@ async function initAdmin() {
       const response = await fetch("/api/admin/setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, confirmPassword }),
+        body: JSON.stringify({ email, password, confirmPassword }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -98,10 +144,9 @@ async function initAdmin() {
         return;
       }
 
-      if (data.message) {
-        document.getElementById("pending-message").innerHTML =
-          `${data.message} Then come back here to sign in.`;
-      }
+      document.getElementById("pending-message").innerHTML =
+        `${data.message || `We sent a confirmation link to <strong>${email}</strong>.`} Then come back here to sign in.`;
+      sessionStorage.setItem("adminPendingEmail", email);
       showPanel("pending-panel");
     } catch {
       setMessage(setupMessage, "Network error. Please try again.", "error");
@@ -114,6 +159,7 @@ async function initAdmin() {
     event.preventDefault();
     setMessage(loginMessage, "");
 
+    const email = document.getElementById("login-email").value;
     const password = document.getElementById("admin-password").value;
     const submitButton = loginForm.querySelector('button[type="submit"]');
     submitButton.disabled = true;
@@ -122,7 +168,7 @@ async function initAdmin() {
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -132,6 +178,7 @@ async function initAdmin() {
       }
 
       loginForm.reset();
+      fillEmailSelect(document.getElementById("login-email"), email);
       await loadSession();
     } catch {
       setMessage(loginMessage, "Network error. Please try again.", "error");

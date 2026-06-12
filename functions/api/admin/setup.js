@@ -1,7 +1,8 @@
 import { hashPassword, json } from "../../_lib/admin-auth.js";
 import {
-  hasAdminPassword,
   hasKv,
+  normalizeAdminEmail,
+  hasUserPassword,
   getPendingSetup,
   savePendingSetup,
 } from "../../_lib/admin-store.js";
@@ -12,11 +13,6 @@ const MIN_PASSWORD_LENGTH = 12;
 function createToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
-  return toBase64Url(bytes);
-}
-
-function toBase64Url(buffer) {
-  const bytes = buffer instanceof ArrayBuffer ? new Uint8Array(buffer) : buffer;
   let binary = "";
   bytes.forEach((byte) => {
     binary += String.fromCharCode(byte);
@@ -35,18 +31,6 @@ export async function onRequestPost(context) {
     return json({ error: "Admin storage is not configured yet." }, 503);
   }
 
-  if (await hasAdminPassword(env)) {
-    return json({ error: "Admin password is already set." }, 400);
-  }
-
-  if (await getPendingSetup(env)) {
-    return json({
-      success: true,
-      pending: true,
-      message: "A confirmation email was already sent. Check grace@graceahrens.com.",
-    });
-  }
-
   let body;
   try {
     body = await request.json();
@@ -54,8 +38,26 @@ export async function onRequestPost(context) {
     return json({ error: "Invalid request." }, 400);
   }
 
+  const email = normalizeAdminEmail(body.email);
   const password = String(body.password || "");
   const confirmPassword = String(body.confirmPassword || "");
+
+  if (!email) {
+    return json({ error: "Please choose a valid admin account." }, 400);
+  }
+
+  if (await hasUserPassword(env, email)) {
+    return json({ error: "This account already has a password. Sign in instead." }, 400);
+  }
+
+  if (await getPendingSetup(env, email)) {
+    return json({
+      success: true,
+      pending: true,
+      email,
+      message: `A confirmation email was already sent to ${email}.`,
+    });
+  }
 
   if (password.length < MIN_PASSWORD_LENGTH) {
     return json({ error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.` }, 400);
@@ -69,11 +71,12 @@ export async function onRequestPost(context) {
   const passwordHash = await hashPassword(password, env.SESSION_SECRET);
   const exp = Date.now() + 60 * 60 * 1000;
 
-  await savePendingSetup(env, { token, passwordHash, exp });
+  await savePendingSetup(env, email, { token, passwordHash, exp });
 
   const origin = new URL(request.url).origin;
-  const confirmUrl = `${origin}/api/admin/confirm-setup?token=${encodeURIComponent(token)}`;
-  const emailResult = await sendAdminConfirmationEmail(env, confirmUrl);
+  const confirmUrl =
+    `${origin}/api/admin/confirm-setup?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+  const emailResult = await sendAdminConfirmationEmail(env, confirmUrl, email);
 
   if (!emailResult.ok) {
     return json({
@@ -84,6 +87,7 @@ export async function onRequestPost(context) {
   return json({
     success: true,
     pending: true,
-    message: "Confirmation email sent to grace@graceahrens.com. Click the link there to finish setup.",
+    email,
+    message: `Confirmation email sent to ${email}. Click the link there to finish setup.`,
   });
 }

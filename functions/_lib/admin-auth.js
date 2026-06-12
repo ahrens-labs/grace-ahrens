@@ -54,10 +54,11 @@ export async function verifyPasswordPlain(input, expected) {
   return crypto.subtle.timingSafeEqual(inputHash, expectedHash);
 }
 
-export async function createSessionToken(secret) {
+export async function createSessionToken(secret, email) {
   const payload = {
     exp: Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000,
     role: "admin",
+    email,
   };
 
   const payloadPart = toBase64Url(encoder().encode(JSON.stringify(payload)));
@@ -67,10 +68,10 @@ export async function createSessionToken(secret) {
 }
 
 export async function verifySessionToken(token, secret) {
-  if (!token || !secret) return false;
+  if (!token || !secret) return null;
 
   const [payloadPart, signaturePart] = token.split(".");
-  if (!payloadPart || !signaturePart) return false;
+  if (!payloadPart || !signaturePart) return null;
 
   try {
     const key = await importHmacKey(secret);
@@ -80,13 +81,14 @@ export async function verifySessionToken(token, secret) {
       fromBase64Url(signaturePart),
       encoder().encode(payloadPart)
     );
-    if (!valid) return false;
+    if (!valid) return null;
 
     const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(payloadPart)));
-    if (!payload?.exp || Date.now() > payload.exp) return false;
-    return payload.role === "admin";
+    if (!payload?.exp || Date.now() > payload.exp) return null;
+    if (payload.role !== "admin" || !payload.email) return null;
+    return payload;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -96,10 +98,15 @@ export function getSessionToken(request) {
   return match ? decodeURIComponent(match[1]) : "";
 }
 
-export async function isAdmin(request, env) {
-  if (!env.SESSION_SECRET) return false;
+export async function getSessionAdmin(request, env) {
+  if (!env.SESSION_SECRET) return null;
   const token = getSessionToken(request);
   return verifySessionToken(token, env.SESSION_SECRET);
+}
+
+export async function isAdmin(request, env) {
+  const session = await getSessionAdmin(request, env);
+  return Boolean(session);
 }
 
 export function sessionCookie(token, maxAgeSeconds = SESSION_DAYS * 24 * 60 * 60) {
