@@ -15,12 +15,37 @@ function getApiToken(env) {
 }
 
 export function hasEmailBinding(env) {
-  return Boolean(env.EMAIL) || Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID);
+  return (
+    Boolean(env.EMAIL) ||
+    Boolean(env.EMAIL_WORKER) ||
+    Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID)
+  );
 }
 
 async function sendViaBinding(env, payload) {
   const result = await env.EMAIL.send(payload);
   return { ok: true, messageId: result.messageId };
+}
+
+async function sendViaWorker(env, payload) {
+  const response = await env.EMAIL_WORKER.fetch(
+    new Request("https://grace-ahrens-email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.ok) {
+    return {
+      ok: false,
+      reason: data.reason || "send_failed",
+      message: data.message,
+    };
+  }
+
+  return { ok: true, messageId: data.messageId };
 }
 
 async function sendViaRestApi(env, payload) {
@@ -73,6 +98,10 @@ export async function sendEmail(env, { to, subject, html, text, bcc }) {
         message: error.message,
       };
     }
+  }
+
+  if (env.EMAIL_WORKER) {
+    return sendViaWorker(env, payload);
   }
 
   return sendViaRestApi(env, payload);

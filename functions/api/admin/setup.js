@@ -6,7 +6,7 @@ import {
   getPendingSetup,
   savePendingSetup,
 } from "../../_lib/admin-store.js";
-import { sendAdminConfirmationEmail } from "../../_lib/email.js";
+import { hasEmailBinding, sendAdminConfirmationEmail } from "../../_lib/email.js";
 
 function createToken() {
   const bytes = new Uint8Array(24);
@@ -27,6 +27,12 @@ export async function onRequestPost(context) {
 
   if (!hasKv(env)) {
     return json({ error: "Admin storage is not configured yet." }, 503);
+  }
+
+  if (!hasEmailBinding(env)) {
+    return json({
+      error: "Email is not configured yet. Onboard graceahrens.com for Email Sending in Cloudflare, then redeploy.",
+    }, 503);
   }
 
   let body;
@@ -77,8 +83,19 @@ export async function onRequestPost(context) {
   const emailResult = await sendAdminConfirmationEmail(env, confirmUrl, email);
 
   if (!emailResult.ok) {
+    const detail =
+      emailResult.reason === "missing_email_config"
+        ? "Email credentials are not set on this site."
+        : emailResult.reason === "E_SENDER_NOT_VERIFIED" || emailResult.reason === "E_SENDER_DOMAIN_NOT_AVAILABLE"
+          ? "graceahrens.com is not onboarded for Email Sending yet."
+          : emailResult.reason === "missing_email_binding"
+            ? "The email worker is not deployed."
+            : null;
+
     return json({
-      error: "Could not send confirmation email. Check that Cloudflare Email is configured.",
+      error: detail
+        ? `Could not send confirmation email. ${detail}`
+        : "Could not send confirmation email. Check that Cloudflare Email Sending is set up for graceahrens.com.",
     }, 500);
   }
 

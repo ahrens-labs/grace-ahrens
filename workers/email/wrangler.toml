@@ -1,0 +1,7 @@
+name = "grace-ahrens-email"
+main = "src/index.js"
+compatibility_date = "2024-06-01"
+workers_dev = false
+
+[[send_email]]
+name = "EMAIL"
