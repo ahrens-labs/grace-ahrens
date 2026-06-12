@@ -8,8 +8,6 @@ import {
 } from "../../_lib/admin-store.js";
 import { sendAdminConfirmationEmail } from "../../_lib/email.js";
 
-const MIN_PASSWORD_LENGTH = 12;
-
 function createToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
@@ -59,8 +57,8 @@ export async function onRequestPost(context) {
     });
   }
 
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    return json({ error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.` }, 400);
+  if (!password) {
+    return json({ error: "Please enter a password." }, 400);
   }
 
   if (password !== confirmPassword) {
