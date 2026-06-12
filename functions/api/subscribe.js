@@ -92,17 +92,15 @@ export async function onRequestPost(context) {
     return json({ error: "Please enter a valid email address." }, 400);
   }
 
-  if (!env.TURNSTILE_SECRET_KEY) {
-    return json({ error: "Newsletter signup is not configured yet." }, 503);
-  }
+  if (env.TURNSTILE_SECRET_KEY) {
+    if (!turnstileToken) {
+      return json({ error: "Please complete the security check." }, 400);
+    }
 
-  if (!turnstileToken) {
-    return json({ error: "Please complete the security check." }, 400);
-  }
-
-  const verified = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, turnstileToken, request);
-  if (!verified) {
-    return json({ error: "Security check failed. Please try again." }, 403);
+    const verified = await verifyTurnstile(env.TURNSTILE_SECRET_KEY, turnstileToken, request);
+    if (!verified) {
+      return json({ error: "Security check failed. Please try again." }, 403);
+    }
   }
 
   if (!env.BUTTONDOWN_API_KEY) {

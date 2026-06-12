@@ -113,15 +113,19 @@ function initYear() {
 }
 
 const turnstileWidgets = new WeakMap();
+let turnstileRequired = false;
 
-async function loadTurnstileSiteKey() {
+async function loadTurnstileConfig() {
   try {
     const response = await fetch("/api/config");
-    if (!response.ok) return "";
+    if (!response.ok) return { siteKey: "", required: false };
     const data = await response.json();
-    return data.turnstileSiteKey || "";
+    return {
+      siteKey: data.turnstileSiteKey || "",
+      required: Boolean(data.turnstileRequired),
+    };
   } catch {
-    return "";
+    return { siteKey: "", required: false };
   }
 }
 
@@ -142,21 +146,21 @@ function renderTurnstileWidgets(siteKey) {
 function waitForTurnstile() {
   return new Promise((resolve) => {
     if (window.turnstile) {
-      resolve();
+      resolve(true);
       return;
     }
 
     const interval = window.setInterval(() => {
       if (window.turnstile) {
         window.clearInterval(interval);
-        resolve();
+        resolve(true);
       }
     }, 100);
 
     window.setTimeout(() => {
       window.clearInterval(interval);
-      resolve();
-    }, 8000);
+      resolve(false);
+    }, 10000);
   });
 }
 
@@ -200,7 +204,7 @@ function initSignupForms() {
         return;
       }
 
-      if (!turnstileToken) {
+      if (turnstileRequired && !turnstileToken) {
         setFormMessage(form, "Please complete the security check below.", "error");
         return;
       }
@@ -240,11 +244,29 @@ function initSignupForms() {
 async function initNewsletter() {
   initSignupForms();
 
-  const siteKey = await loadTurnstileSiteKey();
-  if (!siteKey) return;
+  const config = await loadTurnstileConfig();
+  turnstileRequired = config.required;
 
-  await waitForTurnstile();
-  renderTurnstileWidgets(siteKey);
+  if (!config.siteKey) {
+    document.querySelectorAll(".turnstile-wrap").forEach((element) => {
+      element.hidden = true;
+    });
+    return;
+  }
+
+  const loaded = await waitForTurnstile();
+  if (!loaded) {
+    document.querySelectorAll(".signup-form").forEach((form) => {
+      setFormMessage(
+        form,
+        "Security check failed to load. Please refresh the page and try again.",
+        "error"
+      );
+    });
+    return;
+  }
+
+  renderTurnstileWidgets(config.siteKey);
 }
 
 initStars();
