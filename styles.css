@@ -34,7 +34,7 @@
   --header-nav-max: 940px;
   --page-bg-image: url("images/fantasy-bg-home.png");
   --page-bg-size: 100% auto;
-  --page-bg-position: center bottom;
+  --page-bg-position: center top;
 }
 
 html {
@@ -48,8 +48,7 @@ body {
   line-height: 1.8;
   color: var(--text-on-dark-muted);
   background:
-    radial-gradient(ellipse 36% 72% at 50% 44%, rgba(8, 15, 28, 0.82) 0%, transparent 72%),
-    linear-gradient(180deg, rgba(8, 15, 28, 0.62) 0%, transparent 24%),
+    radial-gradient(ellipse 36% 72% at 50% 54%, rgba(8, 15, 28, 0.82) 0%, transparent 72%),
     linear-gradient(0deg, rgba(11, 21, 40, 0.72) 0%, transparent 38%),
     linear-gradient(
       90deg,
@@ -77,12 +76,12 @@ body.admin-page {
 
 body.page-about {
   --page-bg-image: url("images/fantasy-bg-about.png");
-  --page-bg-position: 54% bottom;
+  --page-bg-position: 54% top;
 }
 
 body.page-newsletter {
   --page-bg-image: url("images/fantasy-bg-newsletter.png");
-  --page-bg-position: 46% bottom;
+  --page-bg-position: 46% top;
 }
 
 :focus-visible {
@@ -168,14 +167,14 @@ a {
   position: relative;
   z-index: 100;
   color: #fff;
-  padding: 1.6rem 1.25rem 2.75rem;
-  margin-bottom: -2.25rem;
+  padding: 1.6rem 1.25rem 2rem;
+  margin-bottom: -1rem;
   overflow: visible;
   background:
     radial-gradient(ellipse 85% 95% at 50% 8%, var(--navy-mid) 0%, var(--navy-deep) 42%, transparent 72%),
     radial-gradient(ellipse 75% 110% at 0% 100%, var(--gray-blue-light) 0%, var(--gray-blue) 18%, var(--navy) 42%, var(--navy-deep) 68%, transparent 88%),
     radial-gradient(ellipse 75% 110% at 100% 100%, var(--gray-blue-light) 0%, var(--gray-blue) 18%, var(--navy) 42%, var(--navy-deep) 68%, transparent 88%),
-    linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 58%, rgba(11, 21, 40, 0.92) 82%, transparent 100%);
+    linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 70%, transparent 100%);
   box-shadow: none;
 }
 
@@ -341,21 +340,7 @@ a {
 }
 
 .site-header::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 5rem;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(11, 21, 40, 0.35) 35%,
-    rgba(8, 15, 28, 0.08) 70%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index: 0;
+  content: none;
 }
 
 .header-inner {
@@ -898,8 +883,7 @@ main {
 @media (max-width: 640px) {
   body:not(.admin-page) {
     background:
-      radial-gradient(ellipse 42% 68% at 50% 46%, rgba(8, 15, 28, 0.86) 0%, transparent 74%),
-      linear-gradient(180deg, rgba(8, 15, 28, 0.68) 0%, transparent 22%),
+      radial-gradient(ellipse 42% 68% at 50% 56%, rgba(8, 15, 28, 0.86) 0%, transparent 74%),
       linear-gradient(0deg, rgba(11, 21, 40, 0.78) 0%, transparent 34%),
       linear-gradient(
         90deg,
@@ -914,8 +898,8 @@ main {
 
   .site-header {
     padding-top: 1.1rem;
-    padding-bottom: 2.25rem;
-    margin-bottom: -1.75rem;
+    padding-bottom: 1.75rem;
+    margin-bottom: -0.75rem;
   }
 
   .header-inner {
