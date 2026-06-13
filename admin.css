@@ -19,7 +19,7 @@
 }
 
 .admin-meta {
-  color: var(--text-soft);
+  color: #000;
   font-size: 0.98rem;
   margin-top: 0.35rem;
 }
@@ -33,7 +33,7 @@
   font-family: var(--font-body);
   font-size: 1.05rem;
   line-height: 1.65;
-  color: var(--text);
+  color: #000;
   background: #fff;
   resize: vertical;
 }
@@ -52,7 +52,7 @@
   border-radius: 8px;
   font-family: var(--font-body);
   font-size: 1.05rem;
-  color: var(--text);
+  color: #000;
   background: #fff;
 }
 
@@ -68,7 +68,7 @@
   padding: 0;
   font: inherit;
   font-weight: 600;
-  color: var(--accent);
+  color: #000;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -87,7 +87,7 @@
 .admin-subscribers {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #d4cbbf;
+  border-top: 1px solid #d9d9d9;
 }
 
 .admin-subscribers__head {
@@ -103,12 +103,12 @@
   font-family: var(--font-display);
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--navy-deep);
+  color: #000;
 }
 
 .admin-subscribers__table-wrap {
   overflow-x: auto;
-  border: 1px solid #d4cbbf;
+  border: 1px solid #d9d9d9;
   border-radius: 8px;
   background: #fff;
 }
@@ -124,13 +124,13 @@
   padding: 0.75rem 1rem;
   text-align: left;
   vertical-align: top;
-  border-bottom: 1px solid #e8e0d4;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .admin-subscribers__table th {
   font-weight: 600;
-  color: var(--text);
-  background: #f8f4ed;
+  color: #000;
+  background: #fff;
 }
 
 .admin-subscribers__table tr:last-child td {
@@ -138,7 +138,7 @@
 }
 
 .admin-subscribers__table a {
-  color: var(--accent);
+  color: #000;
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -146,7 +146,7 @@
 }
 
 .admin-subscribers__empty {
-  color: var(--text-soft);
+  color: #000;
   text-align: center;
 }
 
