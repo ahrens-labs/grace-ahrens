@@ -32,6 +32,7 @@
   --font-body: "Lora", Georgia, serif;
   --container: 780px;
   --header-nav-max: 940px;
+  --page-bg-image: url("images/fantasy-bg-home.png");
 }
 
 html {
@@ -49,7 +50,7 @@ body {
     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
     radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
     radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
-    url("images/fantasy-bg.png") center 68% / cover no-repeat scroll,
+    var(--page-bg-image) center 68% / cover no-repeat scroll,
     linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   min-height: 100vh;
   display: flex;
@@ -64,6 +65,14 @@ body.admin-page {
     radial-gradient(ellipse 50% 40% at 0% 80%, rgba(30, 51, 88, 0.12), transparent 50%),
     radial-gradient(ellipse 50% 40% at 100% 60%, rgba(30, 51, 88, 0.1), transparent 50%),
     linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
+}
+
+body.page-about {
+  --page-bg-image: url("images/fantasy-bg-about.png");
+}
+
+body.page-newsletter {
+  --page-bg-image: url("images/fantasy-bg-newsletter.png");
 }
 
 :focus-visible {
@@ -883,7 +892,7 @@ main {
       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
       radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
       radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
-      url("images/fantasy-bg.png") center 70% / cover no-repeat scroll,
+      var(--page-bg-image) center 70% / cover no-repeat scroll,
       linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   }
 
