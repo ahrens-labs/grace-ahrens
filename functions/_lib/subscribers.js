@@ -100,6 +100,39 @@ export async function listConfirmedSubscribers(env) {
   return subscribers;
 }
 
+export async function listAllSubscribers(env) {
+  const subscribers = [];
+  let cursor;
+
+  do {
+    const page = await env.ADMIN_KV.list({ prefix: SUB_PREFIX, cursor });
+    for (const key of page.keys) {
+      const raw = await env.ADMIN_KV.get(key.name);
+      if (!raw) continue;
+
+      try {
+        const record = JSON.parse(raw);
+        if (record.email) subscribers.push(record);
+      } catch {
+        // Skip malformed records.
+      }
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+
+  subscribers.sort((a, b) => {
+    if (a.status !== b.status) {
+      return a.status === "confirmed" ? -1 : 1;
+    }
+    const nameA = String(a.name || "").toLowerCase();
+    const nameB = String(b.name || "").toLowerCase();
+    if (nameA !== nameB) return nameA.localeCompare(nameB);
+    return String(a.email).localeCompare(String(b.email));
+  });
+
+  return subscribers;
+}
+
 export async function getConfirmedSubscriberCount(env) {
   const subscribers = await listConfirmedSubscribers(env);
   return subscribers.length;

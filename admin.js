@@ -54,6 +54,62 @@ function handleSetupQuery() {
   }
 }
 
+function formatSubscriberDate(timestamp) {
+  if (!timestamp) return "";
+  return new Date(timestamp).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function renderSubscriberList(subscribers) {
+  const body = document.getElementById("subscriber-list-body");
+  const summary = document.getElementById("subscriber-list-summary");
+  if (!body || !summary) return;
+
+  const list = Array.isArray(subscribers) ? subscribers : [];
+  const confirmed = list.filter((entry) => entry.status === "confirmed");
+  const pending = list.length - confirmed.length;
+
+  summary.textContent = list.length
+    ? `${confirmed.length} confirmed${pending ? ` · ${pending} pending confirmation` : ""}`
+    : "No subscribers yet.";
+
+  if (!list.length) {
+    body.innerHTML = `<tr><td colspan="3" class="admin-subscribers__empty">No subscribers yet.</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = list
+    .map((entry) => {
+      const statusLabel = entry.status === "confirmed" ? "Confirmed" : "Pending";
+      const statusClass =
+        entry.status === "confirmed"
+          ? "admin-subscribers__status admin-subscribers__status--confirmed"
+          : "admin-subscribers__status admin-subscribers__status--pending";
+      const dateNote =
+        entry.status === "confirmed" && entry.confirmedAt
+          ? ` · ${formatSubscriberDate(entry.confirmedAt)}`
+          : "";
+
+      return `<tr>
+        <td>${escapeHtml(entry.name || "—")}</td>
+        <td><a href="mailto:${escapeHtml(entry.email)}">${escapeHtml(entry.email)}</a></td>
+        <td><span class="${statusClass}">${statusLabel}${dateNote}</span></td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 async function loadSession() {
   const response = await fetch("/api/admin/session");
   const data = await response.json().catch(() => ({}));
@@ -75,6 +131,8 @@ async function loadSession() {
       if (subjectInput && !subjectInput.value) subjectInput.value = data.draft.subject || "";
       if (bodyInput && !bodyInput.value) bodyInput.value = data.draft.body || "";
     }
+
+    renderSubscriberList(data.subscribers);
 
     showPanel("compose-panel");
     return;
@@ -252,6 +310,8 @@ async function initAdmin() {
         sendButton.hidden = true;
         prepareSendButton.hidden = false;
       }
+
+      await loadSession();
     } catch {
       setMessage(composeMessage, "Network error. Please try again.", "error");
     } finally {

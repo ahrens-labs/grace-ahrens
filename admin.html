@@ -111,6 +111,30 @@
         <p class="signup-privacy">
           Drafts are saved here on the site. Sending goes to every confirmed subscriber via your Cloudflare email.
         </p>
+
+        <section class="admin-subscribers" aria-labelledby="subscriber-list-heading">
+          <div class="admin-subscribers__head">
+            <h2 id="subscriber-list-heading">Subscriber list</h2>
+            <p id="subscriber-list-summary" class="admin-meta">Loading subscribers…</p>
+          </div>
+          <div class="admin-subscribers__table-wrap">
+            <table class="admin-subscribers__table">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody id="subscriber-list-body">
+                <tr>
+                  <td colspan="3" class="admin-subscribers__empty">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
         <p class="signup-note"><a href="index.html">← Back to site</a></p>
       </section>
     </div>

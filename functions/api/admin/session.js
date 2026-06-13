@@ -4,9 +4,9 @@ import {
   getAccountStates,
 } from "../../_lib/admin-store.js";
 import {
-  getConfirmedSubscriberCount,
   getDraft,
   hasSubscriberStorage,
+  listAllSubscribers,
 } from "../../_lib/subscribers.js";
 
 export async function onRequestGet(context) {
@@ -15,10 +15,12 @@ export async function onRequestGet(context) {
 
   if (session) {
     let subscriberCount = null;
+    let subscribers = [];
     let draft = null;
 
     if (hasSubscriberStorage(env)) {
-      subscriberCount = await getConfirmedSubscriberCount(env);
+      subscribers = await listAllSubscribers(env);
+      subscriberCount = subscribers.filter((entry) => entry.status === "confirmed").length;
       draft = await getDraft(env);
     }
 
@@ -26,6 +28,13 @@ export async function onRequestGet(context) {
       authenticated: true,
       email: session.email,
       subscriberCount,
+      subscribers: subscribers.map((entry) => ({
+        name: entry.name || "",
+        email: entry.email,
+        status: entry.status || "pending",
+        confirmedAt: entry.confirmedAt || null,
+        createdAt: entry.createdAt || null,
+      })),
       draft: draft
         ? {
             subject: draft.subject || "",

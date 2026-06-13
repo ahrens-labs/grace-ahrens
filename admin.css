@@ -84,6 +84,86 @@
   margin-top: 0;
 }
 
+.admin-subscribers {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d4cbbf;
+}
+
+.admin-subscribers__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-subscribers h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--navy-deep);
+}
+
+.admin-subscribers__table-wrap {
+  overflow-x: auto;
+  border: 1px solid #d4cbbf;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-subscribers__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.admin-subscribers__table th,
+.admin-subscribers__table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e8e0d4;
+}
+
+.admin-subscribers__table th {
+  font-weight: 600;
+  color: var(--text);
+  background: #f8f4ed;
+}
+
+.admin-subscribers__table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-subscribers__table a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  word-break: break-all;
+}
+
+.admin-subscribers__empty {
+  color: var(--text-soft);
+  text-align: center;
+}
+
+.admin-subscribers__status {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-subscribers__status--confirmed {
+  color: #1f5a3a;
+}
+
+.admin-subscribers__status--pending {
+  color: #7a5c1e;
+}
+
 @media (max-width: 640px) {
   .admin-toolbar {
     flex-direction: column;
