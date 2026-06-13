@@ -33,6 +33,8 @@
   --container: 780px;
   --header-nav-max: 940px;
   --page-bg-image: url("images/fantasy-bg-home.png");
+  --page-bg-size: 100% auto;
+  --page-bg-position: center bottom;
 }
 
 html {
@@ -46,11 +48,17 @@ body {
   line-height: 1.8;
   color: var(--text-on-dark-muted);
   background:
-    linear-gradient(180deg, rgba(8, 15, 28, 0.8) 0%, rgba(11, 21, 40, 0.58) 38%, rgba(19, 35, 63, 0.84) 100%),
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
-    radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
-    var(--page-bg-image) center 68% / cover no-repeat scroll,
+    radial-gradient(ellipse 36% 72% at 50% 44%, rgba(8, 15, 28, 0.82) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(8, 15, 28, 0.62) 0%, transparent 24%),
+    linear-gradient(0deg, rgba(11, 21, 40, 0.72) 0%, transparent 38%),
+    linear-gradient(
+      90deg,
+      rgba(143, 163, 188, 0.14) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(143, 163, 188, 0.14) 100%
+    ),
+    var(--page-bg-image) var(--page-bg-position) / var(--page-bg-size) no-repeat scroll,
     linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   min-height: 100vh;
   display: flex;
@@ -69,10 +77,12 @@ body.admin-page {
 
 body.page-about {
   --page-bg-image: url("images/fantasy-bg-about.png");
+  --page-bg-position: 54% bottom;
 }
 
 body.page-newsletter {
   --page-bg-image: url("images/fantasy-bg-newsletter.png");
+  --page-bg-position: 46% bottom;
 }
 
 :focus-visible {
@@ -888,11 +898,17 @@ main {
 @media (max-width: 640px) {
   body:not(.admin-page) {
     background:
-      linear-gradient(180deg, rgba(8, 15, 28, 0.84) 0%, rgba(11, 21, 40, 0.65) 38%, rgba(19, 35, 63, 0.88) 100%),
-      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
-      radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
-      radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
-      var(--page-bg-image) center 70% / cover no-repeat scroll,
+      radial-gradient(ellipse 42% 68% at 50% 46%, rgba(8, 15, 28, 0.86) 0%, transparent 74%),
+      linear-gradient(180deg, rgba(8, 15, 28, 0.68) 0%, transparent 22%),
+      linear-gradient(0deg, rgba(11, 21, 40, 0.78) 0%, transparent 34%),
+      linear-gradient(
+        90deg,
+        rgba(143, 163, 188, 0.1) 0%,
+        transparent 16%,
+        transparent 84%,
+        rgba(143, 163, 188, 0.1) 100%
+      ),
+      var(--page-bg-image) var(--page-bg-position) / var(--page-bg-size) no-repeat scroll,
       linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   }
 
