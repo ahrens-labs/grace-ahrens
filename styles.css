@@ -86,30 +86,30 @@ body.admin-page {
 
 body.page-about {
   --page-bg-image: url("images/fantasy-bg-about.png");
-  --page-bg-position: 54% top;
+  --page-bg-position: center top;
   --page-bg-gray-wash: linear-gradient(
     180deg,
-    rgba(130, 145, 165, 0.48) 0%,
-    rgba(90, 105, 125, 0.38) 40%,
-    rgba(11, 21, 40, 0.62) 100%
+    rgba(145, 158, 175, 0.58) 0%,
+    rgba(105, 118, 136, 0.5) 38%,
+    rgba(11, 21, 40, 0.72) 100%
   );
-  --page-bg-center-opacity: 0.9;
-  --page-bg-bottom-opacity: 0.84;
-  --page-bg-edge-opacity: 0.24;
+  --page-bg-center-opacity: 0.94;
+  --page-bg-bottom-opacity: 0.88;
+  --page-bg-edge-opacity: 0.16;
 }
 
 body.page-newsletter {
   --page-bg-image: url("images/fantasy-bg-newsletter.png");
-  --page-bg-position: 46% top;
+  --page-bg-position: center top;
   --page-bg-gray-wash: linear-gradient(
     180deg,
-    rgba(130, 145, 165, 0.48) 0%,
-    rgba(90, 105, 125, 0.38) 40%,
-    rgba(11, 21, 40, 0.62) 100%
+    rgba(145, 158, 175, 0.58) 0%,
+    rgba(105, 118, 136, 0.5) 38%,
+    rgba(11, 21, 40, 0.72) 100%
   );
-  --page-bg-center-opacity: 0.9;
-  --page-bg-bottom-opacity: 0.84;
-  --page-bg-edge-opacity: 0.24;
+  --page-bg-center-opacity: 0.94;
+  --page-bg-bottom-opacity: 0.88;
+  --page-bg-edge-opacity: 0.16;
 }
 
 :focus-visible {
