@@ -27,6 +27,10 @@
   --text-on-dark: #eef2f8;
   --text-on-dark-muted: #d4ddea;
   --accent: #1e3a66;
+  --favicon-silver-highlight: #90908e;
+  --favicon-silver-mid: #6e6e6c;
+  --favicon-silver-shadow: #585856;
+  --favicon-silver-deep: #494949;
   --font-title: Georgia, "Times New Roman", Times, serif;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Lora", Georgia, serif;
@@ -377,32 +381,42 @@ a {
   top: 0;
   width: 100%;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(143, 163, 188, 0.45);
+  -webkit-text-stroke: 1.5px rgba(73, 73, 73, 0.55);
   transform: translate(2px, 3px);
   z-index: 0;
-  filter: drop-shadow(0 0 10px rgba(45, 80, 136, 0.3));
+  filter: drop-shadow(0 0 8px rgba(73, 73, 73, 0.35));
 }
 
 .site-title__front {
   position: relative;
   z-index: 1;
-  background: linear-gradient(180deg, var(--silver-bright) 0%, var(--silver) 52%, var(--moon) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--favicon-silver-highlight) 0%,
+    var(--favicon-silver-mid) 48%,
+    var(--favicon-silver-shadow) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: none;
-  filter: drop-shadow(0 1px 0 rgba(19, 35, 63, 0.55));
+  filter: drop-shadow(0 1px 0 rgba(73, 73, 73, 0.65));
 }
 
 .site-title:hover .site-title__front {
-  background: linear-gradient(180deg, #fff 0%, var(--silver-bright) 55%, var(--silver) 100%);
+  background: linear-gradient(
+    180deg,
+    #989896 0%,
+    var(--favicon-silver-highlight) 55%,
+    var(--favicon-silver-mid) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .site-title:hover .site-title__back {
-  -webkit-text-stroke-color: rgba(184, 201, 228, 0.55);
+  -webkit-text-stroke-color: rgba(88, 88, 86, 0.65);
 }
 
 .site-nav ul {
