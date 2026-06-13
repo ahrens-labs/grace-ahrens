@@ -27,7 +27,7 @@
   --text-on-dark: #eef2f8;
   --text-on-dark-muted: #d4ddea;
   --accent: #1e3a66;
-  --font-title: "Cormorant Garamond", "Fraunces", Georgia, serif;
+  --font-title: Georgia, "Times New Roman", Times, serif;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Lora", Georgia, serif;
   --container: 780px;
@@ -351,22 +351,6 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 3vw, 1.35rem);
-}
-
-.title-star {
-  flex-shrink: 0;
-  width: 10px;
-  height: 30px;
-  background: linear-gradient(180deg, var(--silver-bright), var(--moon));
-  clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
-  filter: drop-shadow(0 0 10px rgba(238, 242, 250, 0.55));
-  opacity: 0.85;
-  animation: twinkle 5s ease-in-out infinite;
-}
-
-.title-star--right {
-  animation-delay: 1.8s;
 }
 
 .site-title {
@@ -374,9 +358,9 @@ a {
   display: inline-block;
   font-family: var(--font-title);
   font-size: clamp(2.25rem, 5.5vw, 3.1rem);
-  font-weight: 500;
+  font-weight: 700;
   font-style: normal;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;
@@ -393,36 +377,32 @@ a {
   top: 0;
   width: 100%;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(184, 201, 228, 0.55);
-  transform: translate(3px, 4px);
+  -webkit-text-stroke: 1.5px rgba(143, 163, 188, 0.45);
+  transform: translate(2px, 3px);
   z-index: 0;
-  filter: drop-shadow(0 0 12px rgba(45, 80, 136, 0.35));
+  filter: drop-shadow(0 0 10px rgba(45, 80, 136, 0.3));
 }
 
 .site-title__front {
   position: relative;
   z-index: 1;
-  color: #fff;
-  text-shadow:
-    0 0 20px rgba(184, 201, 228, 0.25),
-    0 2px 0 rgba(19, 35, 63, 0.5);
+  background: linear-gradient(180deg, var(--silver-bright) 0%, var(--silver) 52%, var(--moon) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 1px 0 rgba(19, 35, 63, 0.55));
 }
 
 .site-title:hover .site-title__front {
-  color: var(--silver-bright);
+  background: linear-gradient(180deg, #fff 0%, var(--silver-bright) 55%, var(--silver) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .site-title:hover .site-title__back {
-  -webkit-text-stroke-color: rgba(238, 242, 250, 0.65);
-}
-
-.site-tagline {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-on-dark-muted);
+  -webkit-text-stroke-color: rgba(184, 201, 228, 0.55);
 }
 
 .site-nav ul {
@@ -905,11 +885,6 @@ main {
     padding-right: 3rem;
   }
 
-  .title-star {
-    width: 7px;
-    height: 22px;
-  }
-
   .header-wind {
     width: 38%;
     opacity: 0.75;
@@ -922,7 +897,7 @@ main {
 
   .site-title {
     font-size: clamp(1.55rem, 7vw, 2rem);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.015em;
   }
 
   .site-title__back {
@@ -989,7 +964,6 @@ main {
 
   .twinkle,
   .float,
-  .title-star,
   .header-wind-spark {
     animation: none;
   }
