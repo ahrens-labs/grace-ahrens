@@ -45,15 +45,25 @@ body {
   line-height: 1.8;
   color: var(--text-on-dark-muted);
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.18), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(30, 51, 88, 0.12), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 100% 60%, rgba(30, 51, 88, 0.1), transparent 50%),
+    linear-gradient(180deg, rgba(8, 15, 28, 0.8) 0%, rgba(11, 21, 40, 0.58) 38%, rgba(19, 35, 63, 0.84) 100%),
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
+    radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
+    url("images/fantasy-bg.png") center 68% / cover no-repeat fixed,
     linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+body.admin-page {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.18), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(30, 51, 88, 0.12), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 100% 60%, rgba(30, 51, 88, 0.1), transparent 50%),
+    linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
 }
 
 :focus-visible {
@@ -864,6 +874,16 @@ main {
 /* Responsive */
 
 @media (max-width: 640px) {
+  body:not(.admin-page) {
+    background:
+      linear-gradient(180deg, rgba(8, 15, 28, 0.84) 0%, rgba(11, 21, 40, 0.65) 38%, rgba(19, 35, 63, 0.88) 100%),
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
+      radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
+      radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
+      url("images/fantasy-bg.png") center 70% / cover no-repeat scroll,
+      linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
+  }
+
   .site-header {
     padding-top: 1.1rem;
     padding-bottom: 2.25rem;
