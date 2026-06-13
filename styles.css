@@ -27,10 +27,12 @@
   --text-on-dark: #eef2f8;
   --text-on-dark-muted: #d4ddea;
   --accent: #1e3a66;
-  --favicon-silver-highlight: #90908e;
-  --favicon-silver-mid: #6e6e6c;
-  --favicon-silver-shadow: #585856;
-  --favicon-silver-deep: #494949;
+  --favicon-silver-shine: #f2f2f0;
+  --favicon-silver-highlight: #e4e4e2;
+  --favicon-silver-mid: #c4c4c2;
+  --favicon-silver-tone: #979694;
+  --favicon-silver-shadow: #8a8a88;
+  --favicon-silver-deep: #686866;
   --font-title: Georgia, "Times New Roman", Times, serif;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Lora", Georgia, serif;
@@ -381,42 +383,67 @@ a {
   top: 0;
   width: 100%;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(73, 73, 73, 0.55);
+  -webkit-text-stroke: 1px rgba(104, 104, 102, 0.42);
   transform: translate(2px, 3px);
   z-index: 0;
-  filter: drop-shadow(0 0 8px rgba(73, 73, 73, 0.35));
+  filter: drop-shadow(0 2px 4px rgba(40, 40, 38, 0.45));
 }
 
 .site-title__front {
   position: relative;
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    var(--favicon-silver-highlight) 0%,
-    var(--favicon-silver-mid) 48%,
-    var(--favicon-silver-shadow) 100%
-  );
+  background:
+    linear-gradient(
+      108deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.72) 44%,
+      rgba(255, 255, 255, 0.22) 52%,
+      transparent 74%
+    ),
+    linear-gradient(
+      180deg,
+      var(--favicon-silver-shine) 0%,
+      var(--favicon-silver-highlight) 14%,
+      var(--favicon-silver-mid) 36%,
+      #efefed 50%,
+      var(--favicon-silver-tone) 68%,
+      var(--favicon-silver-highlight) 84%,
+      var(--favicon-silver-shadow) 100%
+    );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: none;
-  filter: drop-shadow(0 1px 0 rgba(73, 73, 73, 0.65));
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.28))
+    drop-shadow(0 2px 5px rgba(30, 30, 28, 0.42));
 }
 
 .site-title:hover .site-title__front {
-  background: linear-gradient(
-    180deg,
-    #989896 0%,
-    var(--favicon-silver-highlight) 55%,
-    var(--favicon-silver-mid) 100%
-  );
+  background:
+    linear-gradient(
+      108deg,
+      transparent 22%,
+      rgba(255, 255, 255, 0.85) 42%,
+      rgba(255, 255, 255, 0.3) 52%,
+      transparent 76%
+    ),
+    linear-gradient(
+      180deg,
+      #fff 0%,
+      var(--favicon-silver-shine) 16%,
+      var(--favicon-silver-highlight) 40%,
+      #f8f8f6 54%,
+      var(--favicon-silver-mid) 72%,
+      var(--favicon-silver-highlight) 100%
+    );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .site-title:hover .site-title__back {
-  -webkit-text-stroke-color: rgba(88, 88, 86, 0.65);
+  -webkit-text-stroke-color: rgba(120, 120, 118, 0.5);
 }
 
 .site-nav ul {
