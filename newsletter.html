@@ -8,13 +8,25 @@
   <title>Newsletter — Grace Ahrens</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="page-stars" aria-hidden="true"></div>
 
   <header class="site-header">
+    <div class="header-wind" aria-hidden="true">
+      <svg class="header-wind__svg" viewBox="0 0 240 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path class="header-wind__gust header-wind__gust--1" d="M-10 40 C 60 35, 110 80, 90 130 S 40 190, 120 220" />
+        <path class="header-wind__gust header-wind__gust--2" d="M-5 90 C 70 70, 130 110, 100 165 S 55 230, 140 250" />
+        <path class="header-wind__gust header-wind__gust--3" d="M0 150 C 50 140, 95 170, 80 210 S 70 245, 130 255" />
+      </svg>
+      <span class="header-wind-spark header-wind-spark--1"></span>
+      <span class="header-wind-spark header-wind-spark--2"></span>
+      <span class="header-wind-spark header-wind-spark--3"></span>
+      <span class="header-wind-spark header-wind-spark--4"></span>
+      <span class="header-wind-spark header-wind-spark--5"></span>
+    </div>
     <div class="header-stars" aria-hidden="true">
       <span class="header-star header-star--tl"></span>
       <span class="header-star header-star--tr"></span>
@@ -30,7 +42,10 @@
     <div class="header-inner">
       <div class="title-wrap">
         <span class="title-star title-star--left" aria-hidden="true"></span>
-        <a href="index.html" class="site-title">Grace Ahrens</a>
+        <a href="index.html" class="site-title">
+          <span class="site-title__back" aria-hidden="true">Grace Ahrens</span>
+          <span class="site-title__front">Grace Ahrens</span>
+        </a>
         <span class="title-star title-star--right" aria-hidden="true"></span>
       </div>
       <p class="site-tagline">Fantasy Author</p>
