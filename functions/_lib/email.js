@@ -1,5 +1,24 @@
 const BATCH_SIZE = 50;
 
+export function formatEmailSendError(reason, message) {
+  switch (reason) {
+    case "E_SENDER_NOT_VERIFIED":
+    case "E_SENDER_DOMAIN_NOT_AVAILABLE":
+      return "graceahrens.com is not fully set up for Email Sending yet. Finish domain onboarding in Cloudflare.";
+    case "E_RECIPIENT_NOT_ALLOWED":
+      return "One or more recipients are not allowed yet. Complete Email Sending setup for graceahrens.com, or verify destination addresses in Cloudflare Email Routing.";
+    case "E_TOO_MANY_RECIPIENTS":
+      return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
+    case "missing_email_binding":
+    case "missing_email_config":
+      return "Email sending is not configured on the server.";
+    case "send_failed":
+      return message || "Email sending failed for an unknown reason.";
+    default:
+      return message || reason || "Email sending failed.";
+  }
+}
+
 function getFromAddress(env) {
   return env.NEWSLETTER_FROM_EMAIL || "Grace Ahrens <grace@graceahrens.com>";
 }
@@ -28,13 +47,22 @@ async function sendViaBinding(env, payload) {
 }
 
 async function sendViaWorker(env, payload) {
-  const response = await env.EMAIL_WORKER.fetch(
-    new Request("https://grace-ahrens-email/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-  );
+  let response;
+  try {
+    response = await env.EMAIL_WORKER.fetch(
+      new Request("https://grace-ahrens-email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+    );
+  } catch (error) {
+    return {
+      ok: false,
+      reason: "send_failed",
+      message: error.message,
+    };
+  }
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok || !data.ok) {
@@ -164,19 +192,23 @@ export async function sendNewsletterToList(env, subject, body, recipients) {
   }
 
   const html = `<div style="font-family: Georgia, serif; line-height: 1.6;">${bodyToHtml(body)}</div>`;
-  const fromEmail = getFromEmailOnly(env);
   const emails = recipients.map((subscriber) => subscriber.email);
   let sent = 0;
 
   for (let index = 0; index < emails.length; index += BATCH_SIZE) {
     const batch = emails.slice(index, index + BATCH_SIZE);
-    const result = await sendEmail(env, {
-      to: fromEmail,
-      bcc: batch,
+    const payload = {
+      to: batch[0],
       subject,
       html,
       text: body,
-    });
+    };
+
+    if (batch.length > 1) {
+      payload.bcc = batch.slice(1);
+    }
+
+    const result = await sendEmail(env, payload);
 
     if (!result.ok) {
       return { ok: false, reason: result.reason, message: result.message, sent };
