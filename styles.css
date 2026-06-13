@@ -49,7 +49,7 @@ body {
     radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.16), transparent 55%),
     radial-gradient(ellipse 55% 45% at 0% 88%, rgba(107, 127, 154, 0.2), transparent 52%),
     radial-gradient(ellipse 55% 45% at 100% 78%, rgba(107, 127, 154, 0.16), transparent 52%),
-    url("images/fantasy-bg.png") center 68% / cover no-repeat fixed,
+    url("images/fantasy-bg.png") center 68% / cover no-repeat scroll,
     linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
   min-height: 100vh;
   display: flex;
