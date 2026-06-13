@@ -27,7 +27,7 @@
   --text-on-dark: #eef2f8;
   --text-on-dark-muted: #d4ddea;
   --accent: #1e3a66;
-  --font-title: "Syne", "Fraunces", Georgia, serif;
+  --font-title: "Cormorant Garamond", "Fraunces", Georgia, serif;
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Lora", Georgia, serif;
   --container: 780px;
@@ -367,13 +367,12 @@ a {
   position: relative;
   display: inline-block;
   font-family: var(--font-title);
-  font-size: clamp(2rem, 5.2vw, 2.85rem);
-  font-weight: 800;
+  font-size: clamp(2.25rem, 5.5vw, 3.1rem);
+  font-weight: 500;
   font-style: normal;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   line-height: 1;
   text-decoration: none;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
