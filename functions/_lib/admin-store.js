@@ -7,7 +7,7 @@ export const ALLOWED_ADMIN_EMAILS = [
 
 const LEGACY_PASSWORD_KEY = "admin:password_hash";
 const LEGACY_PENDING_KEY = "admin:setup_pending";
-const PENDING_TTL = 60 * 60;
+export const PENDING_TTL = 60 * 60;
 
 function userKey(email) {
   return `admin:user:${email}`;

@@ -212,12 +212,13 @@ async function initAdmin() {
 
       setupForm.reset();
       fillEmailSelect(document.getElementById("login-email"), email);
-      setMessage(
-        loginMessage,
-        data.message || `Password set for ${email}. You can sign in now.`,
-        "success"
-      );
-      showPanel("login-panel");
+      const pendingMessage = document.getElementById("pending-message");
+      if (pendingMessage) {
+        pendingMessage.textContent =
+          data.message ||
+          `We sent a confirmation link to ${email}. Click it to activate your admin password, then come back here to sign in.`;
+      }
+      showPanel("pending-panel");
     } catch {
       setMessage(setupMessage, "Network error. Please try again.", "error");
     } finally {
