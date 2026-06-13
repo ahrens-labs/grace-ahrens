@@ -76,24 +76,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-body.admin-page {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 80, 136, 0.18), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(30, 51, 88, 0.12), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 100% 60%, rgba(30, 51, 88, 0.1), transparent 50%),
-    linear-gradient(180deg, var(--ink) 0%, var(--navy-deep) 35%, var(--navy) 100%);
-}
-
-body.page-about {
-  --page-bg-image: url("images/fantasy-bg-about.png?v=3");
-  --page-bg-position: center top;
-}
-
-body.page-newsletter {
-  --page-bg-image: url("images/fantasy-bg-newsletter.png?v=3");
-  --page-bg-position: center top;
-}
-
 :focus-visible {
   outline: 2px solid var(--navy-glow);
   outline-offset: 3px;
@@ -891,7 +873,7 @@ main {
 /* Responsive */
 
 @media (max-width: 640px) {
-  body:not(.admin-page) {
+  body {
     background:
       var(--page-bg-gray-wash),
       radial-gradient(
