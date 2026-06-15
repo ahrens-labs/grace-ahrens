@@ -1,5 +1,3 @@
-const BATCH_SIZE = 50;
-
 export function formatEmailSendError(reason, message) {
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
@@ -191,35 +189,32 @@ export function bodyToHtml(body) {
     .replace(/\n/g, "<br>\n");
 }
 
-export async function sendNewsletterToList(env, subject, body, recipients) {
+import { buildNewsletterEmail } from "./newsletter-template.js";
+import { buildUnsubscribeUrl } from "./subscribers.js";
+
+export async function sendNewsletterToList(env, subject, body, recipients, origin) {
   if (!recipients.length) {
     return { ok: false, reason: "no_recipients" };
   }
 
-  const html = `<div style="font-family: Georgia, serif; line-height: 1.6;">${bodyToHtml(body)}</div>`;
-  const emails = recipients.map((subscriber) => subscriber.email);
   let sent = 0;
 
-  for (let index = 0; index < emails.length; index += BATCH_SIZE) {
-    const batch = emails.slice(index, index + BATCH_SIZE);
-    const payload = {
-      to: batch[0],
+  for (const subscriber of recipients) {
+    const unsubscribeUrl = await buildUnsubscribeUrl(env, origin, subscriber.email);
+    const { html, text } = buildNewsletterEmail(body, { unsubscribeUrl });
+
+    const result = await sendEmail(env, {
+      to: subscriber.email,
       subject,
       html,
-      text: body,
-    };
-
-    if (batch.length > 1) {
-      payload.bcc = batch.slice(1);
-    }
-
-    const result = await sendEmail(env, payload);
+      text,
+    });
 
     if (!result.ok) {
       return { ok: false, reason: result.reason, message: result.message, sent };
     }
 
-    sent += batch.length;
+    sent += 1;
   }
 
   return { ok: true, sent };

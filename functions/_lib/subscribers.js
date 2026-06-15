@@ -190,3 +190,51 @@ export async function saveSubscriber(env, record) {
   if (!record?.email) return;
   await env.ADMIN_KV.put(subKey(record.email), JSON.stringify(record));
 }
+
+function encoder() {
+  return new TextEncoder();
+}
+
+function toBase64Url(buffer) {
+  const bytes = buffer instanceof ArrayBuffer ? new Uint8Array(buffer) : buffer;
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+export async function createUnsubscribeToken(email, secret) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    encoder().encode(`${secret}:unsub:${email}`)
+  );
+  return toBase64Url(digest);
+}
+
+export async function verifyUnsubscribeToken(email, token, secret) {
+  if (!email || !token || !secret) return false;
+  const expected = await createUnsubscribeToken(email, secret);
+  return token === expected;
+}
+
+export async function buildUnsubscribeUrl(env, origin, email) {
+  const token = await createUnsubscribeToken(email, env.SESSION_SECRET);
+  return `${origin}/api/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+}
+
+export async function unsubscribeEmail(env, email, token) {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (!(await verifyUnsubscribeToken(normalized, token, env.SESSION_SECRET))) {
+    return { ok: false, reason: "invalid_token" };
+  }
+
+  const record = await getSubscriber(env, normalized);
+  if (!record) return { ok: false, reason: "not_found" };
+
+  record.status = "unsubscribed";
+  record.unsubscribedAt = Date.now();
+  await saveSubscriber(env, record);
+
+  return { ok: true };
+}

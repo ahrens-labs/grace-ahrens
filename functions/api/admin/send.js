@@ -70,7 +70,8 @@ export async function onRequestPost(context) {
       return json({ error: "There are no subscribers to email yet." }, 400);
     }
 
-    const sendResult = await sendNewsletterToList(env, subject, message, subscribers);
+    const origin = new URL(request.url).origin;
+    const sendResult = await sendNewsletterToList(env, subject, message, subscribers, origin);
     if (!sendResult.ok) {
       const detail = sendResult.sent
         ? ` Sent ${sendResult.sent} before the error.`

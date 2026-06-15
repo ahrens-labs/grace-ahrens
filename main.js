@@ -243,13 +243,18 @@ function initSignupForms() {
 
 function showNewsletterConfirmation() {
   const params = new URLSearchParams(window.location.search);
-  const status = params.get("confirmed");
-  if (!status) return;
+  const confirmed = params.get("confirmed");
+  const unsubscribed = params.get("unsubscribed");
+  if (!confirmed && !unsubscribed) return;
 
   const form = document.querySelector(".section-card--newsletter .signup-form");
   if (!form) return;
 
-  if (status === "1") {
+  if (unsubscribed === "1") {
+    setFormMessage(form, "You have been unsubscribed. You will not receive further emails.", "success");
+  } else if (unsubscribed === "invalid") {
+    setFormMessage(form, "That unsubscribe link is invalid or expired.", "error");
+  } else if (confirmed === "1") {
     setFormMessage(form, "You are confirmed and on the list. Thank you!", "success");
   } else {
     setFormMessage(form, "That confirmation link is invalid or expired. Please sign up again.", "error");
