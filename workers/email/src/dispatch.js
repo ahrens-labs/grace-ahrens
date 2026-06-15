@@ -1,12 +1,3 @@
-const CLOUDFLARE_FALLBACK_ERRORS = new Set([
-  "E_RECIPIENT_NOT_ALLOWED",
-  "E_RECIPIENT_SUPPRESSED",
-  "E_SENDER_NOT_VERIFIED",
-  "E_SENDER_DOMAIN_NOT_AVAILABLE",
-  "missing_email_binding",
-  "send_failed",
-]);
-
 function defaultSender(env) {
   return {
     email: env.SENDER_EMAIL || "grace@graceahrens.com",
