@@ -1,3 +1,6 @@
+import { buildNewsletterEmail, personalizeNewsletterText } from "./newsletter-template.js";
+import { buildUnsubscribeUrl } from "./subscribers.js";
+
 export function formatEmailSendError(reason, message) {
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
@@ -189,9 +192,6 @@ export function bodyToHtml(body) {
     .replace(/\n/g, "<br>\n");
 }
 
-import { buildNewsletterEmail } from "./newsletter-template.js";
-import { buildUnsubscribeUrl } from "./subscribers.js";
-
 export async function sendNewsletterToList(env, subject, body, recipients, origin) {
   if (!recipients.length) {
     return { ok: false, reason: "no_recipients" };
@@ -201,11 +201,14 @@ export async function sendNewsletterToList(env, subject, body, recipients, origi
 
   for (const subscriber of recipients) {
     const unsubscribeUrl = await buildUnsubscribeUrl(env, origin, subscriber.email);
-    const { html, text } = buildNewsletterEmail(body, { unsubscribeUrl });
+    const { html, text } = buildNewsletterEmail(body, {
+      unsubscribeUrl,
+      name: subscriber.name,
+    });
 
     const result = await sendEmail(env, {
       to: subscriber.email,
-      subject,
+      subject: personalizeNewsletterText(subject, subscriber.name),
       html,
       text,
     });

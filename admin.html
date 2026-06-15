@@ -95,8 +95,9 @@
           </div>
           <div>
             <label for="email-body">Message</label>
-            <textarea id="email-body" name="body" rows="14" maxlength="50000" placeholder="Write your newsletter here. Line breaks are preserved." required></textarea>
+            <textarea id="email-body" name="body" rows="14" maxlength="50000" placeholder="Write your newsletter here. Use {name} for each subscriber&apos;s name. Line breaks are preserved." required></textarea>
           </div>
+          <p class="signup-note">Use <code>{name}</code> in the subject or message to insert each subscriber&apos;s name.</p>
           <div id="send-confirm-wrap" hidden>
             <label for="send-confirm">Type SEND to email your full list</label>
             <input type="text" id="send-confirm" name="confirm" autocomplete="off" placeholder="SEND">

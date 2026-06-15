@@ -34,8 +34,18 @@ function buildSocialLinksText() {
     .join("\n");
 }
 
-export function buildNewsletterEmail(body, { unsubscribeUrl }) {
-  const bodyHtml = bodyToHtml(body);
+function displayName(name) {
+  const trimmed = String(name || "").trim();
+  return trimmed || "friend";
+}
+
+export function personalizeNewsletterText(text, name) {
+  return String(text || "").replaceAll("{name}", displayName(name));
+}
+
+export function buildNewsletterEmail(body, { unsubscribeUrl, name }) {
+  const personalizedBody = personalizeNewsletterText(body, name);
+  const bodyHtml = bodyToHtml(personalizedBody);
   const socialHtml = buildSocialLinksHtml();
 
   const html = `<!DOCTYPE html>
@@ -72,7 +82,7 @@ export function buildNewsletterEmail(body, { unsubscribeUrl }) {
 </html>`;
 
   const textParts = [
-    body,
+    personalizedBody,
     "",
     buildSocialLinksText(),
     "",
