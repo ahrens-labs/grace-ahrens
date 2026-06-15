@@ -85,7 +85,9 @@ export async function onRequestPost(context) {
   }
 
   if (!hasSubscriberStorage(env) || !hasEmailBinding(env)) {
-    return json({ error: "Newsletter signup is not configured yet." }, 503);
+    return json({
+      error: "Newsletter email is not configured yet. Set GRACE_EMAIL_SECRET on this Pages project and on the chess-accounts worker (same value), then redeploy both.",
+    }, 503);
   }
 
   const result = await registerSubscriber(env, email, name);
