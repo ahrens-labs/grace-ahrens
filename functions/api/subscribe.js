@@ -2,7 +2,7 @@ import {
   hasSubscriberStorage,
   registerSubscriber,
 } from "../_lib/subscribers.js";
-import { hasEmailBinding } from "../_lib/email.js";
+import { hasEmailBinding, formatEmailSendError } from "../_lib/email.js";
 import { sendSubscriptionConfirmationEmail } from "../_lib/welcome-emails.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -106,7 +106,9 @@ export async function onRequestPost(context) {
   const emailResult = await sendSubscriptionConfirmationEmail(env, confirmUrl, email, name);
 
   if (!emailResult.ok) {
-    return json({ error: "Unable to send confirmation email right now. Please try again later." }, 500);
+    return json({
+      error: formatEmailSendError(emailResult.reason, emailResult.message),
+    }, 500);
   }
 
   return json({

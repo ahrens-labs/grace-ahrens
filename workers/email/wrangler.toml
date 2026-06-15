@@ -3,5 +3,15 @@ main = "src/index.js"
 compatibility_date = "2024-06-01"
 workers_dev = false
 
+# Use EMAIL_TRANSACTIONAL (not EMAIL) so legacy dashboard allowlists on an old
+# binding do not cause E_RECIPIENT_NOT_ALLOWED for arbitrary subscribers.
 [[send_email]]
-name = "EMAIL"
+name = "EMAIL_TRANSACTIONAL"
+
+[vars]
+SENDER_EMAIL = "grace@graceahrens.com"
+SENDER_NAME = "Grace Ahrens"
+
+# Secrets (set via `npx wrangler secret put`):
+#   RESEND_API_KEY              — Resend fallback when Cloudflare rejects a send
+#   TRANSACTIONAL_EMAIL_VIA     — optional: "resend" to skip Cloudflare entirely

@@ -1,3 +1,5 @@
+import { dispatchTransactionalEmail } from "./dispatch.js";
+
 export default {
   async fetch(request, env) {
     if (request.method !== "POST") {
@@ -11,22 +13,11 @@ export default {
       return Response.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
-    if (!env.EMAIL) {
-      return Response.json({ ok: false, reason: "missing_email_binding" }, { status: 503 });
+    const result = await dispatchTransactionalEmail(env, payload);
+    if (!result.ok) {
+      return Response.json(result, { status: 500 });
     }
 
-    try {
-      const result = await env.EMAIL.send(payload);
-      return Response.json({ ok: true, messageId: result.messageId });
-    } catch (error) {
-      return Response.json(
-        {
-          ok: false,
-          reason: error.code || "send_failed",
-          message: error.message,
-        },
-        { status: 500 }
-      );
-    }
+    return Response.json(result);
   },
 };

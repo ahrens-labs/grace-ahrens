@@ -13,20 +13,30 @@ export function formatEmailSendError(reason, message) {
     case "missing_email_config":
       return "Email sending is not configured on the server.";
     case "send_failed":
+    case "resend_failed":
       return message || "Email sending failed for an unknown reason.";
+    case "missing_resend_key":
+      return "Email sending failed on Cloudflare and no Resend fallback is configured.";
     default:
       return message || reason || "Email sending failed.";
   }
 }
 
 function getFromAddress(env) {
-  return env.NEWSLETTER_FROM_EMAIL || "Grace Ahrens <grace@graceahrens.com>";
+  const override = env.NEWSLETTER_FROM_EMAIL || env.SENDER_EMAIL;
+  if (override) {
+    const match = String(override).match(/^(.+?)\s*<([^>]+)>$/);
+    if (match) {
+      return { name: match[1].trim(), email: match[2].trim() };
+    }
+    return { email: String(override).trim(), name: "Grace Ahrens" };
+  }
+
+  return { email: "grace@graceahrens.com", name: "Grace Ahrens" };
 }
 
 function getFromEmailOnly(env) {
-  const from = getFromAddress(env);
-  const match = from.match(/<([^>]+)>/);
-  return match ? match[1] : from;
+  return getFromAddress(env).email;
 }
 
 function getApiToken(env) {
@@ -36,13 +46,15 @@ function getApiToken(env) {
 export function hasEmailBinding(env) {
   return (
     Boolean(env.EMAIL) ||
+    Boolean(env.EMAIL_TRANSACTIONAL) ||
     Boolean(env.EMAIL_WORKER) ||
     Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID)
   );
 }
 
 async function sendViaBinding(env, payload) {
-  const result = await env.EMAIL.send(payload);
+  const binding = env.EMAIL_TRANSACTIONAL || env.EMAIL;
+  const result = await binding.send(payload);
   return { ok: true, messageId: result.messageId };
 }
 
@@ -116,7 +128,7 @@ export async function sendEmail(env, { to, subject, html, text, bcc }) {
   if (html) payload.html = html;
   if (text) payload.text = text;
 
-  if (env.EMAIL) {
+  if (env.EMAIL || env.EMAIL_TRANSACTIONAL) {
     try {
       return await sendViaBinding(env, payload);
     } catch (error) {
