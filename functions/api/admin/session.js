@@ -6,7 +6,8 @@ import {
 import {
   getDraft,
   hasSubscriberStorage,
-  listAllSubscribers,
+  listConfirmedSubscribers,
+  getConfirmedSubscriberCount,
 } from "../../_lib/subscribers.js";
 
 export async function onRequestGet(context) {
@@ -19,8 +20,8 @@ export async function onRequestGet(context) {
     let draft = null;
 
     if (hasSubscriberStorage(env)) {
-      subscribers = await listAllSubscribers(env);
-      subscriberCount = subscribers.filter((entry) => entry.status === "confirmed").length;
+      subscribers = await listConfirmedSubscribers(env);
+      subscriberCount = await getConfirmedSubscriberCount(env);
       draft = await getDraft(env);
     }
 
@@ -31,7 +32,6 @@ export async function onRequestGet(context) {
       subscribers: subscribers.map((entry) => ({
         name: entry.name || "",
         email: entry.email,
-        status: entry.status || "pending",
         confirmedAt: entry.confirmedAt || null,
         createdAt: entry.createdAt || null,
       })),

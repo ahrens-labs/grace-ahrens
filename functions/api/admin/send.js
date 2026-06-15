@@ -67,7 +67,7 @@ export async function onRequestPost(context) {
 
     const subscribers = await listConfirmedSubscribers(env);
     if (!subscribers.length) {
-      return json({ error: "There are no confirmed subscribers to email yet." }, 400);
+      return json({ error: "There are no subscribers to email yet." }, 400);
     }
 
     const sendResult = await sendNewsletterToList(env, subject, message, subscribers);

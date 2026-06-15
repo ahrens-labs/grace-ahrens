@@ -69,11 +69,9 @@ function renderSubscriberList(subscribers) {
   if (!body || !summary) return;
 
   const list = Array.isArray(subscribers) ? subscribers : [];
-  const confirmed = list.filter((entry) => entry.status === "confirmed");
-  const pending = list.length - confirmed.length;
 
   summary.textContent = list.length
-    ? `${confirmed.length} confirmed${pending ? ` · ${pending} pending confirmation` : ""}`
+    ? `${list.length} subscriber${list.length === 1 ? "" : "s"}`
     : "No subscribers yet.";
 
   if (!list.length) {
@@ -83,20 +81,12 @@ function renderSubscriberList(subscribers) {
 
   body.innerHTML = list
     .map((entry) => {
-      const statusLabel = entry.status === "confirmed" ? "Confirmed" : "Pending";
-      const statusClass =
-        entry.status === "confirmed"
-          ? "admin-subscribers__status admin-subscribers__status--confirmed"
-          : "admin-subscribers__status admin-subscribers__status--pending";
-      const dateNote =
-        entry.status === "confirmed" && entry.confirmedAt
-          ? ` · ${formatSubscriberDate(entry.confirmedAt)}`
-          : "";
+      const joined = entry.confirmedAt ? formatSubscriberDate(entry.confirmedAt) : "—";
 
       return `<tr>
         <td>${escapeHtml(entry.name || "—")}</td>
         <td><a href="mailto:${escapeHtml(entry.email)}">${escapeHtml(entry.email)}</a></td>
-        <td><span class="${statusClass}">${statusLabel}${dateNote}</span></td>
+        <td>${escapeHtml(joined)}</td>
       </tr>`;
     })
     .join("");
@@ -120,7 +110,7 @@ async function loadSession() {
     userEl.textContent = `Signed in as ${data.email}`;
 
     if (typeof data.subscriberCount === "number") {
-      countEl.textContent = `${data.subscriberCount} confirmed subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
+      countEl.textContent = `${data.subscriberCount} subscriber${data.subscriberCount === 1 ? "" : "s"} on the list`;
     } else {
       countEl.textContent = "Subscriber count unavailable";
     }
