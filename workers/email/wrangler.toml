@@ -3,16 +3,15 @@ main = "src/index.js"
 compatibility_date = "2024-06-01"
 workers_dev = false
 
-# Use EMAIL_TRANSACTIONAL (not EMAIL) so legacy dashboard allowlists on an old
-# binding do not cause E_RECIPIENT_NOT_ALLOWED for arbitrary subscribers.
+# Same pattern as chess-accounts: EMAIL_TRANSACTIONAL with NO allowed_destination_addresses.
 [[send_email]]
 name = "EMAIL_TRANSACTIONAL"
 
 [vars]
-SENDER_EMAIL = "grace@graceahrens.com"
+# ahrenslabs.com is already onboarded for Cloudflare Email Sending (chess-accounts).
+# Display name is Grace; replies go to grace@. Switch SENDER_EMAIL to grace@graceahrens.com
+# after onboarding graceahrens.com under Cloudflare → Email Service → Email Sending.
+SENDER_EMAIL = "caleb@ahrenslabs.com"
 SENDER_NAME = "Grace Ahrens"
-# Skip Cloudflare Email (E_RECIPIENT_NOT_ALLOWED) — use Resend like chess-accounts.
-TRANSACTIONAL_EMAIL_VIA = "resend"
-
-# Secrets (set via `npx wrangler secret put` in this directory):
-#   RESEND_API_KEY — same key as chess-accounts works; graceahrens.com must be verified in Resend
+REPLY_TO_EMAIL = "grace@graceahrens.com"
+FALLBACK_SENDER_EMAIL = "caleb@ahrenslabs.com"

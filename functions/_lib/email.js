@@ -4,19 +4,16 @@ export function formatEmailSendError(reason, message) {
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
-      return "graceahrens.com is not fully set up for Email Sending yet. Finish domain onboarding in Cloudflare.";
+      return "The sender address is not verified for Cloudflare Email Sending yet. Redeploy the email worker or onboard the domain in Cloudflare.";
     case "E_RECIPIENT_NOT_ALLOWED":
-      return "Email could not be sent. Add RESEND_API_KEY to the grace-ahrens-email worker (same key as chess-accounts) and verify graceahrens.com in Resend.";
+      return "Cloudflare blocked this recipient. Redeploy the grace-ahrens-email worker and ensure its send-email binding has no destination allowlist (see workers/email/README.md).";
     case "E_TOO_MANY_RECIPIENTS":
       return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
     case "missing_email_binding":
     case "missing_email_config":
       return "Email sending is not configured on the server.";
     case "send_failed":
-    case "resend_failed":
       return message || "Email sending failed for an unknown reason.";
-    case "missing_resend_key":
-      return "Email sending is not configured. Run: cd workers/email && npx wrangler secret put RESEND_API_KEY";
     default:
       return message || reason || "Email sending failed.";
   }
@@ -32,11 +29,11 @@ function getFromAddress(env) {
     return { email: String(override).trim(), name: "Grace Ahrens" };
   }
 
-  return { email: "grace@graceahrens.com", name: "Grace Ahrens" };
+  return { email: "caleb@ahrenslabs.com", name: "Grace Ahrens" };
 }
 
-function getFromEmailOnly(env) {
-  return getFromAddress(env).email;
+function getReplyTo(env) {
+  return env.REPLY_TO_EMAIL || "grace@graceahrens.com";
 }
 
 function getApiToken(env) {
@@ -48,59 +45,8 @@ export function hasEmailBinding(env) {
     Boolean(env.EMAIL) ||
     Boolean(env.EMAIL_TRANSACTIONAL) ||
     Boolean(env.EMAIL_WORKER) ||
-    Boolean(env.RESEND_API_KEY) ||
     Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID)
   );
-}
-
-function formatFromForResend(from) {
-  if (from && typeof from === "object" && from.email) {
-    return from.name ? `${from.name} <${from.email}>` : from.email;
-  }
-  return String(from || "Grace Ahrens <grace@graceahrens.com>");
-}
-
-async function sendViaResend(env, payload) {
-  const apiKey = env.RESEND_API_KEY;
-  if (!apiKey) {
-    return { ok: false, reason: "missing_resend_key" };
-  }
-
-  const body = {
-    from: formatFromForResend(payload.from),
-    subject: payload.subject,
-  };
-
-  if (payload.to) {
-    body.to = Array.isArray(payload.to) ? payload.to : [payload.to];
-  }
-
-  if (payload.bcc) {
-    body.bcc = Array.isArray(payload.bcc) ? payload.bcc : [payload.bcc];
-  }
-
-  if (payload.html) body.html = payload.html;
-  if (payload.text) body.text = payload.text;
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    return {
-      ok: false,
-      reason: "resend_failed",
-      message: data.message || data.error || "Resend request failed.",
-    };
-  }
-
-  return { ok: true, messageId: data.id, via: "resend" };
 }
 
 async function sendViaBinding(env, payload) {
@@ -171,6 +117,7 @@ async function sendViaRestApi(env, payload) {
 export async function sendEmail(env, { to, subject, html, text, bcc }) {
   const payload = {
     from: getFromAddress(env),
+    replyTo: getReplyTo(env),
     subject,
   };
 
@@ -192,20 +139,7 @@ export async function sendEmail(env, { to, subject, html, text, bcc }) {
   }
 
   if (env.EMAIL_WORKER) {
-    const workerResult = await sendViaWorker(env, payload);
-    if (workerResult.ok) {
-      return workerResult;
-    }
-
-    if (env.RESEND_API_KEY) {
-      return sendViaResend(env, payload);
-    }
-
-    return workerResult;
-  }
-
-  if (env.RESEND_API_KEY) {
-    return sendViaResend(env, payload);
+    return sendViaWorker(env, payload);
   }
 
   return sendViaRestApi(env, payload);

@@ -1,32 +1,26 @@
 # grace-ahrens-email
 
-Outbound mail for graceahrens.com. Uses **Resend** (same as chess-accounts) because Cloudflare Email Sending returns `E_RECIPIENT_NOT_ALLOWED` for arbitrary subscribers until the domain is fully onboarded.
+Outbound mail via **Cloudflare Email Sending** (not Resend). Uses the same account and pattern as chess-accounts.
 
-## One-time setup
+## Why caleb@ahrenslabs.com?
+
+ahrenslabs.com is already onboarded for Cloudflare Email Sending. Messages show **Grace Ahrens** as the sender name and set **Reply-To: grace@graceahrens.com**. No Resend domain slot needed.
+
+When graceahrens.com is onboarded on Cloudflare Email Sending, change `SENDER_EMAIL` in `wrangler.toml` to `grace@graceahrens.com` and redeploy.
+
+## Deploy
 
 ```bash
 cd workers/email
-
-# Paste the same RESEND_API_KEY you use for chess-accounts
-npx wrangler secret put RESEND_API_KEY
-
 npx wrangler deploy
 ```
 
-**Resend dashboard:** verify `graceahrens.com` and allow `grace@graceahrens.com` as a sender (Domains → add graceahrens.com if needed).
+## If you see E_RECIPIENT_NOT_ALLOWED
 
-## Optional: Pages fallback
+1. Redeploy this worker (`npx wrangler deploy`).
+2. In Cloudflare dashboard → Workers → **grace-ahrens-email** → Settings → Bindings → confirm the send-email binding is **EMAIL_TRANSACTIONAL** with **no** destination allowlist.
+3. Do not use an old `EMAIL` binding with `allowed_destination_addresses`.
 
-If the worker secret is missing, you can also add `RESEND_API_KEY` as an encrypted variable on the **grace-ahrens** Pages project in the Cloudflare dashboard. Pages Functions will fall back to Resend when the worker fails.
+## Onboard graceahrens.com (optional, for grace@ sender)
 
-## Config
-
-| Variable | Where | Purpose |
-|----------|--------|---------|
-| `TRANSACTIONAL_EMAIL_VIA=resend` | wrangler.toml | Skip Cloudflare, use Resend only |
-| `SENDER_EMAIL` | wrangler.toml | `grace@graceahrens.com` |
-| `RESEND_API_KEY` | wrangler secret | Resend API key |
-
-## Why EMAIL_TRANSACTIONAL?
-
-Binding name avoids legacy dashboard allowlists on an old `EMAIL` binding. With `TRANSACTIONAL_EMAIL_VIA=resend`, Cloudflare send is not used at runtime.
+Cloudflare dashboard → **Email Service** → **Email Sending** → add **graceahrens.com** and complete DNS. Then set `SENDER_EMAIL = "grace@graceahrens.com"` in `wrangler.toml`.
