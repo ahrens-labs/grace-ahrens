@@ -6,12 +6,14 @@ export function formatEmailSendError(reason, message) {
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
       return "The sender address is not verified for Cloudflare Email Sending yet. Redeploy the email worker or onboard the domain in Cloudflare.";
     case "E_RECIPIENT_NOT_ALLOWED":
-      return "Cloudflare blocked this recipient. Redeploy the grace-ahrens-email worker and ensure its send-email binding has no destination allowlist (see workers/email/README.md).";
+      return "Cloudflare blocked this recipient. Email must route through chess-accounts — set GRACE_EMAIL_SECRET and redeploy (see workers/email/README.md).";
     case "E_TOO_MANY_RECIPIENTS":
       return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
     case "missing_email_binding":
     case "missing_email_config":
-      return "Email sending is not configured on the server.";
+    case "unauthorized":
+    case "not_configured":
+      return message || "Email is not configured. Set GRACE_EMAIL_SECRET on chess-accounts and grace-ahrens Pages (same value).";
     case "send_failed":
       return message || "Email sending failed for an unknown reason.";
     default:
@@ -41,10 +43,13 @@ function getApiToken(env) {
 }
 
 export function hasEmailBinding(env) {
+  if (env.EMAIL_WORKER) {
+    return Boolean(env.GRACE_EMAIL_SECRET);
+  }
+
   return (
     Boolean(env.EMAIL) ||
     Boolean(env.EMAIL_TRANSACTIONAL) ||
-    Boolean(env.EMAIL_WORKER) ||
     Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID)
   );
 }
@@ -56,12 +61,24 @@ async function sendViaBinding(env, payload) {
 }
 
 async function sendViaWorker(env, payload) {
+  const secret = env.GRACE_EMAIL_SECRET;
+  if (!secret) {
+    return {
+      ok: false,
+      reason: "missing_email_config",
+      message: "GRACE_EMAIL_SECRET is not set on the grace-ahrens Pages project.",
+    };
+  }
+
   let response;
   try {
     response = await env.EMAIL_WORKER.fetch(
-      new Request("https://grace-ahrens-email/send", {
+      new Request("https://chess-accounts/internal/grace-ahrens/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Grace-Email-Secret": secret,
+        },
         body: JSON.stringify(payload),
       })
     );

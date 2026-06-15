@@ -9,7 +9,7 @@ id = "abd1b9b9f0e1468fb67d0f5d6d97eb29"
 
 [[services]]
 binding = "EMAIL_WORKER"
-service = "grace-ahrens-email"
+service = "chess-accounts"
 
 [triggers]
 crons = ["0 * * * *"]

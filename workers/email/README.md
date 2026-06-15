@@ -1,26 +1,35 @@
-# grace-ahrens-email
+# Email for graceahrens.com
 
-Outbound mail via **Cloudflare Email Sending** (not Resend). Uses the same account and pattern as chess-accounts.
+Grace site mail is sent through the **chess-accounts** worker, which already has a working Cloudflare `EMAIL_TRANSACTIONAL` binding (no recipient allowlist).
 
-## Why caleb@ahrenslabs.com?
+The separate `grace-ahrens-email` worker is no longer used.
 
-ahrenslabs.com is already onboarded for Cloudflare Email Sending. Messages show **Grace Ahrens** as the sender name and set **Reply-To: grace@graceahrens.com**. No Resend domain slot needed.
+## Setup (one time)
 
-When graceahrens.com is onboarded on Cloudflare Email Sending, change `SENDER_EMAIL` in `wrangler.toml` to `grace@graceahrens.com` and redeploy.
-
-## Deploy
+Pick a random secret string, then set the **same value** in three places:
 
 ```bash
-cd workers/email
+# 1. chess-accounts worker
+cd ~/git/ahrens-labs.github.io/workers
+npx wrangler secret put GRACE_EMAIL_SECRET
+npx wrangler deploy
+
+# 2. grace-ahrens Pages
+cd ~/git/grace-ahrens
+npx wrangler pages secret put GRACE_EMAIL_SECRET --project-name=grace-ahrens
+npx wrangler pages deploy . --project-name=grace-ahrens --branch=main
+
+# 3. drip scheduler (welcome emails)
+cd ~/git/grace-ahrens/workers/scheduler
+npx wrangler secret put GRACE_EMAIL_SECRET
 npx wrangler deploy
 ```
 
-## If you see E_RECIPIENT_NOT_ALLOWED
+## What recipients see
 
-1. Redeploy this worker (`npx wrangler deploy`).
-2. In Cloudflare dashboard → Workers → **grace-ahrens-email** → Settings → Bindings → confirm the send-email binding is **EMAIL_TRANSACTIONAL** with **no** destination allowlist.
-3. Do not use an old `EMAIL` binding with `allowed_destination_addresses`.
+- **From:** Grace Ahrens `<caleb@ahrenslabs.com>`
+- **Reply-To:** `grace@graceahrens.com`
 
-## Onboard graceahrens.com (optional, for grace@ sender)
+## Endpoint
 
-Cloudflare dashboard → **Email Service** → **Email Sending** → add **graceahrens.com** and complete DNS. Then set `SENDER_EMAIL = "grace@graceahrens.com"` in `wrangler.toml`.
+Pages calls `POST /internal/grace-ahrens/send` on chess-accounts with header `X-Grace-Email-Secret`.
