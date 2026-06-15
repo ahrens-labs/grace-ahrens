@@ -1,6 +1,6 @@
 import { bodyToHtml } from "./email.js";
 
-const MAILING_ADDRESS = "283 Wagner Avenue<br>Ambridge, PA 15003";
+const AUTHOR_NAME = "Grace Ahrens";
 
 export const NEWSLETTER_SOCIAL_LINKS = [
   { label: "website", url: "https://graceahrens.com" },
