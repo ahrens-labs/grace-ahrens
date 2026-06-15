@@ -149,6 +149,10 @@ export async function saveDraft(env, draft) {
   await env.ADMIN_KV.put(DRAFT_KEY, JSON.stringify(draft));
 }
 
+export async function clearDraft(env) {
+  await env.ADMIN_KV.delete(DRAFT_KEY);
+}
+
 export async function getDraft(env) {
   const raw = await env.ADMIN_KV.get(DRAFT_KEY);
   if (!raw) return null;

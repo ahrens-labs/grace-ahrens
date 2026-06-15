@@ -3,6 +3,7 @@ import {
   hasSubscriberStorage,
   listConfirmedSubscribers,
   saveDraft,
+  clearDraft,
 } from "../../_lib/subscribers.js";
 import {
   formatEmailSendError,
@@ -80,14 +81,7 @@ export async function onRequestPost(context) {
       }, 500);
     }
 
-    await saveDraft(env, {
-      subject,
-      body: message,
-      savedAt: Date.now(),
-      savedBy: session.email,
-      lastSentAt: Date.now(),
-      recipientCount: sendResult.sent,
-    });
+    await clearDraft(env);
 
     return json({
       success: true,
