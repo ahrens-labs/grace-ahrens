@@ -6,7 +6,7 @@ export function formatEmailSendError(reason, message) {
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
       return "graceahrens.com is not fully set up for Email Sending yet. Finish domain onboarding in Cloudflare.";
     case "E_RECIPIENT_NOT_ALLOWED":
-      return "One or more recipients are not allowed yet. Complete Email Sending setup for graceahrens.com, or verify destination addresses in Cloudflare Email Routing.";
+      return "Email could not be sent. Add RESEND_API_KEY to the grace-ahrens-email worker (same key as chess-accounts) and verify graceahrens.com in Resend.";
     case "E_TOO_MANY_RECIPIENTS":
       return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
     case "missing_email_binding":
@@ -16,7 +16,7 @@ export function formatEmailSendError(reason, message) {
     case "resend_failed":
       return message || "Email sending failed for an unknown reason.";
     case "missing_resend_key":
-      return "Email sending failed on Cloudflare and no Resend fallback is configured.";
+      return "Email sending is not configured. Run: cd workers/email && npx wrangler secret put RESEND_API_KEY";
     default:
       return message || reason || "Email sending failed.";
   }
@@ -48,8 +48,59 @@ export function hasEmailBinding(env) {
     Boolean(env.EMAIL) ||
     Boolean(env.EMAIL_TRANSACTIONAL) ||
     Boolean(env.EMAIL_WORKER) ||
+    Boolean(env.RESEND_API_KEY) ||
     Boolean(getApiToken(env) && env.CLOUDFLARE_ACCOUNT_ID)
   );
+}
+
+function formatFromForResend(from) {
+  if (from && typeof from === "object" && from.email) {
+    return from.name ? `${from.name} <${from.email}>` : from.email;
+  }
+  return String(from || "Grace Ahrens <grace@graceahrens.com>");
+}
+
+async function sendViaResend(env, payload) {
+  const apiKey = env.RESEND_API_KEY;
+  if (!apiKey) {
+    return { ok: false, reason: "missing_resend_key" };
+  }
+
+  const body = {
+    from: formatFromForResend(payload.from),
+    subject: payload.subject,
+  };
+
+  if (payload.to) {
+    body.to = Array.isArray(payload.to) ? payload.to : [payload.to];
+  }
+
+  if (payload.bcc) {
+    body.bcc = Array.isArray(payload.bcc) ? payload.bcc : [payload.bcc];
+  }
+
+  if (payload.html) body.html = payload.html;
+  if (payload.text) body.text = payload.text;
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    return {
+      ok: false,
+      reason: "resend_failed",
+      message: data.message || data.error || "Resend request failed.",
+    };
+  }
+
+  return { ok: true, messageId: data.id, via: "resend" };
 }
 
 async function sendViaBinding(env, payload) {
@@ -141,7 +192,20 @@ export async function sendEmail(env, { to, subject, html, text, bcc }) {
   }
 
   if (env.EMAIL_WORKER) {
-    return sendViaWorker(env, payload);
+    const workerResult = await sendViaWorker(env, payload);
+    if (workerResult.ok) {
+      return workerResult;
+    }
+
+    if (env.RESEND_API_KEY) {
+      return sendViaResend(env, payload);
+    }
+
+    return workerResult;
+  }
+
+  if (env.RESEND_API_KEY) {
+    return sendViaResend(env, payload);
   }
 
   return sendViaRestApi(env, payload);

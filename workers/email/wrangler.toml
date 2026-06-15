@@ -11,7 +11,8 @@ name = "EMAIL_TRANSACTIONAL"
 [vars]
 SENDER_EMAIL = "grace@graceahrens.com"
 SENDER_NAME = "Grace Ahrens"
+# Skip Cloudflare Email (E_RECIPIENT_NOT_ALLOWED) — use Resend like chess-accounts.
+TRANSACTIONAL_EMAIL_VIA = "resend"
 
-# Secrets (set via `npx wrangler secret put`):
-#   RESEND_API_KEY              — Resend fallback when Cloudflare rejects a send
-#   TRANSACTIONAL_EMAIL_VIA     — optional: "resend" to skip Cloudflare entirely
+# Secrets (set via `npx wrangler secret put` in this directory):
+#   RESEND_API_KEY — same key as chess-accounts works; graceahrens.com must be verified in Resend

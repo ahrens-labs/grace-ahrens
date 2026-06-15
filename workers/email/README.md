@@ -1,37 +1,32 @@
 # grace-ahrens-email
 
-Outbound mail for graceahrens.com (newsletter confirmations, welcome drips, admin).
+Outbound mail for graceahrens.com. Uses **Resend** (same as chess-accounts) because Cloudflare Email Sending returns `E_RECIPIENT_NOT_ALLOWED` for arbitrary subscribers until the domain is fully onboarded.
 
-Same pattern as chess-accounts: Cloudflare `EMAIL_TRANSACTIONAL` binding first, Resend fallback.
-
-## Deploy
+## One-time setup
 
 ```bash
 cd workers/email
+
+# Paste the same RESEND_API_KEY you use for chess-accounts
+npx wrangler secret put RESEND_API_KEY
+
 npx wrangler deploy
 ```
 
-## Secrets
+**Resend dashboard:** verify `graceahrens.com` and allow `grace@graceahrens.com` as a sender (Domains → add graceahrens.com if needed).
 
-Copy the Resend key from chess-accounts if you use the same Resend account:
+## Optional: Pages fallback
 
-```bash
-npx wrangler secret put RESEND_API_KEY
-```
+If the worker secret is missing, you can also add `RESEND_API_KEY` as an encrypted variable on the **grace-ahrens** Pages project in the Cloudflare dashboard. Pages Functions will fall back to Resend when the worker fails.
 
-Optional — force Resend only (useful when Cloudflare returns `E_RECIPIENT_NOT_ALLOWED`):
+## Config
 
-```bash
-# In wrangler.toml [vars], uncomment:
-# TRANSACTIONAL_EMAIL_VIA = "resend"
-```
-
-`SENDER_EMAIL` must be verified with whichever provider sends (`grace@graceahrens.com`).
+| Variable | Where | Purpose |
+|----------|--------|---------|
+| `TRANSACTIONAL_EMAIL_VIA=resend` | wrangler.toml | Skip Cloudflare, use Resend only |
+| `SENDER_EMAIL` | wrangler.toml | `grace@graceahrens.com` |
+| `RESEND_API_KEY` | wrangler secret | Resend API key |
 
 ## Why EMAIL_TRANSACTIONAL?
 
-Do **not** rename back to `EMAIL`. An old dashboard allowlist on a legacy `EMAIL` binding causes `E_RECIPIENT_NOT_ALLOWED` for arbitrary subscribers. This worker intentionally omits `allowed_destination_addresses`.
-
-## Test
-
-After deploy, sign up on the newsletter form or check Cloudflare Worker logs for `grace-ahrens-email`.
+Binding name avoids legacy dashboard allowlists on an old `EMAIL` binding. With `TRANSACTIONAL_EMAIL_VIA=resend`, Cloudflare send is not used at runtime.
