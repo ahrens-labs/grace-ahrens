@@ -2,10 +2,8 @@ import {
   hasSubscriberStorage,
   registerSubscriber,
 } from "../_lib/subscribers.js";
-import {
-  hasEmailBinding,
-  sendSubscriptionConfirmationEmail,
-} from "../_lib/email.js";
+import { hasEmailBinding } from "../_lib/email.js";
+import { sendSubscriptionConfirmationEmail } from "../_lib/welcome-emails.js";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NAME_LENGTH = 100;

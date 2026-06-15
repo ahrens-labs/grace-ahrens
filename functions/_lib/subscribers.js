@@ -2,6 +2,7 @@ const SUB_PREFIX = "sub:";
 const TOKEN_PREFIX = "subtoken:";
 const DRAFT_KEY = "newsletter:draft";
 const TOKEN_TTL = 7 * 24 * 60 * 60;
+const HOUR_MS = 60 * 60 * 1000;
 
 function subKey(email) {
   return `${SUB_PREFIX}${email}`;
@@ -70,6 +71,12 @@ export async function confirmSubscriber(env, token) {
 
   record.status = "confirmed";
   record.confirmedAt = Date.now();
+  record.drip = {
+    email2DueAt: record.confirmedAt + 24 * HOUR_MS,
+    email3DueAt: record.confirmedAt + 72 * HOUR_MS,
+    email2Sent: false,
+    email3Sent: false,
+  };
 
   await env.ADMIN_KV.put(subKey(email), JSON.stringify(record));
   await env.ADMIN_KV.delete(tokenKey(token));
@@ -151,4 +158,31 @@ export async function getDraft(env) {
   } catch {
     return null;
   }
+}
+
+export async function listAllSubscriberRecords(env) {
+  const subscribers = [];
+  let cursor;
+
+  do {
+    const page = await env.ADMIN_KV.list({ prefix: SUB_PREFIX, cursor });
+    for (const key of page.keys) {
+      const raw = await env.ADMIN_KV.get(key.name);
+      if (!raw) continue;
+
+      try {
+        subscribers.push(JSON.parse(raw));
+      } catch {
+        // Skip malformed records.
+      }
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+
+  return subscribers;
+}
+
+export async function saveSubscriber(env, record) {
+  if (!record?.email) return;
+  await env.ADMIN_KV.put(subKey(record.email), JSON.stringify(record));
 }

@@ -155,28 +155,6 @@ export async function sendAdminConfirmationEmail(env, confirmUrl, toEmail) {
   });
 }
 
-export async function sendSubscriptionConfirmationEmail(env, confirmUrl, toEmail, name) {
-  const greeting = name ? `Hi ${name},` : "Hi,";
-
-  return sendEmail(env, {
-    to: toEmail,
-    subject: "Confirm your subscription — Grace Ahrens",
-    html: `
-      <p>${greeting}</p>
-      <p>Thanks for signing up for updates from Grace Ahrens. Please confirm your subscription by clicking the link below:</p>
-      <p><a href="${confirmUrl}">Confirm subscription</a></p>
-      <p>If you did not sign up, you can ignore this email.</p>
-    `,
-    text: [
-      greeting,
-      "Thanks for signing up for updates from Grace Ahrens.",
-      "Please confirm your subscription by visiting:",
-      confirmUrl,
-      "If you did not sign up, you can ignore this email.",
-    ].join("\n\n"),
-  });
-}
-
 export function bodyToHtml(body) {
   return body
     .replace(/&/g, "&amp;")
