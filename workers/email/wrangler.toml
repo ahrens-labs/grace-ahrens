@@ -3,15 +3,12 @@ main = "src/index.js"
 compatibility_date = "2024-06-01"
 workers_dev = false
 
-# Same pattern as chess-accounts: EMAIL_TRANSACTIONAL with NO allowed_destination_addresses.
+# Cloudflare Email Sending only — no Resend.
 [[send_email]]
 name = "EMAIL_TRANSACTIONAL"
 
 [vars]
-# ahrenslabs.com is already onboarded for Cloudflare Email Sending (chess-accounts).
-# Display name is Grace; replies go to grace@. Switch SENDER_EMAIL to grace@graceahrens.com
-# after onboarding graceahrens.com under Cloudflare → Email Service → Email Sending.
-SENDER_EMAIL = "caleb@ahrenslabs.com"
+# graceahrens.com sender for Grace Ahrens site mail.
+SENDER_EMAIL = "grace@graceahrens.com"
 SENDER_NAME = "Grace Ahrens"
 REPLY_TO_EMAIL = "grace@graceahrens.com"
-FALLBACK_SENDER_EMAIL = "caleb@ahrenslabs.com"

@@ -9,3 +9,7 @@ id = "abd1b9b9f0e1468fb67d0f5d6d97eb29"
 [[services]]
 binding = "EMAIL_WORKER"
 service = "chess-accounts"
+
+[vars]
+SENDER_EMAIL = "grace@graceahrens.com"
+REPLY_TO_EMAIL = "grace@graceahrens.com"

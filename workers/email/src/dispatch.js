@@ -1,6 +1,6 @@
 function defaultSender(env) {
   return {
-    email: env.SENDER_EMAIL || "caleb@ahrenslabs.com",
+    email: env.SENDER_EMAIL || "grace@graceahrens.com",
     name: env.SENDER_NAME || "Grace Ahrens",
   };
 }

@@ -5,9 +5,9 @@ export function formatEmailSendError(reason, message) {
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
-      return "The sender address is not verified for Cloudflare Email Sending yet. Redeploy the email worker or onboard the domain in Cloudflare.";
+      return "The sender address is not verified for Cloudflare Email Sending yet. Onboard graceahrens.com under Cloudflare Email → Email Sending.";
     case "E_RECIPIENT_NOT_ALLOWED":
-      return "Cloudflare blocked this recipient. Email must route through chess-accounts — set GRACE_EMAIL_SECRET and redeploy (see workers/email/README.md).";
+      return "Cloudflare blocked this recipient. Check Email Sending setup for graceahrens.com (see workers/email/README.md).";
     case "E_TOO_MANY_RECIPIENTS":
       return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
     case "missing_email_binding":
@@ -32,7 +32,7 @@ function getFromAddress(env) {
     return { email: String(override).trim(), name: "Grace Ahrens" };
   }
 
-  return { email: "caleb@ahrenslabs.com", name: "Grace Ahrens" };
+  return { email: "grace@graceahrens.com", name: "Grace Ahrens" };
 }
 
 function getReplyTo(env) {

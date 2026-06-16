@@ -1,8 +1,6 @@
 # Email for graceahrens.com
 
-Grace site mail is sent through the **chess-accounts** worker, which already has a working Cloudflare `EMAIL_TRANSACTIONAL` binding (no recipient allowlist).
-
-The separate `grace-ahrens-email` worker is no longer used.
+Grace site mail is sent through **Cloudflare Email Sending** only (no Resend). Pages and the scheduler call the **chess-accounts** worker, which sends via its `EMAIL_TRANSACTIONAL` binding and never falls back to Resend for Grace mail.
 
 ## Setup (one time)
 
@@ -25,11 +23,17 @@ npx wrangler secret put GRACE_EMAIL_SECRET
 npx wrangler deploy
 ```
 
+Onboard **graceahrens.com** under Cloudflare → Email → Email Sending and verify `grace@graceahrens.com` as a sender.
+
 ## What recipients see
 
-- **From:** Grace Ahrens `<caleb@ahrenslabs.com>`
+- **From:** Grace Ahrens `<grace@graceahrens.com>`
 - **Reply-To:** `grace@graceahrens.com`
 
 ## Endpoint
 
 Pages calls `POST /internal/grace-ahrens/send` on chess-accounts with header `X-Grace-Email-Secret`.
+
+## Optional: dedicated worker
+
+`workers/email/` (`grace-ahrens-email`) is a standalone Cloudflare-only sender if you want Grace mail fully separate from chess-accounts later. It is not the active path today.
