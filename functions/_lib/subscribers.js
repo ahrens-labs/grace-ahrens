@@ -238,3 +238,17 @@ export async function unsubscribeEmail(env, email, token) {
 
   return { ok: true };
 }
+
+export async function deleteSubscriber(env, email) {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (!normalized) return { ok: false, reason: "invalid_email" };
+
+  const record = await getSubscriber(env, normalized);
+  if (!record) return { ok: false, reason: "not_found" };
+  if (record.status !== "confirmed") {
+    return { ok: false, reason: "not_confirmed" };
+  }
+
+  await env.ADMIN_KV.delete(subKey(normalized));
+  return { ok: true, email: normalized, name: record.name || "" };
+}

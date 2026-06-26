@@ -86,7 +86,7 @@ export async function onRequestPost(context) {
 
   if (!hasSubscriberStorage(env) || !hasEmailBinding(env)) {
     return json({
-      error: "Newsletter email is not configured yet. Set GRACE_EMAIL_SECRET on this Pages project and on the chess-accounts worker (same value), then redeploy both.",
+      error: "Newsletter email is not configured yet. Set GRACE_EMAIL_SECRET on this Pages project and on chess-accounts (same value), then redeploy both.",
     }, 503);
   }
 
@@ -105,7 +105,7 @@ export async function onRequestPost(context) {
   const origin = new URL(request.url).origin;
   const confirmUrl =
     `${origin}/api/confirm-subscribe?token=${encodeURIComponent(result.token)}`;
-  const emailResult = await sendSubscriptionConfirmationEmail(env, confirmUrl, email, name);
+  const emailResult = await sendSubscriptionConfirmationEmail(env, confirmUrl, email, name, origin);
 
   if (!emailResult.ok) {
     return json({

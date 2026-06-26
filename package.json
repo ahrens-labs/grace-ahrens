@@ -1,0 +1,7 @@
+{
+  "name": "grace-ahrens",
+  "private": true,
+  "devDependencies": {
+    "wrangler": "^4.100.0"
+  }
+}

@@ -2,12 +2,14 @@ import { buildNewsletterEmail, personalizeNewsletterText } from "./newsletter-te
 import { buildUnsubscribeUrl } from "./subscribers.js";
 
 export function formatEmailSendError(reason, message) {
+  const detail = message ? ` (${message})` : "";
+
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
-      return "The sender address is not verified for Cloudflare Email Sending yet. Onboard graceahrens.com under Cloudflare Email → Email Sending.";
+      return `grace@graceahrens.com is not set up for sending yet. In Cloudflare, go to Email → Email Sending → Onboard domain → graceahrens.com.${detail}`;
     case "E_RECIPIENT_NOT_ALLOWED":
-      return "Cloudflare blocked this recipient. Check Email Sending setup for graceahrens.com (see workers/email/README.md).";
+      return `Cloudflare blocked this recipient.${detail}`;
     case "E_TOO_MANY_RECIPIENTS":
       return "Too many recipients in one send. Try again — this should not happen with a normal list size.";
     case "missing_email_binding":

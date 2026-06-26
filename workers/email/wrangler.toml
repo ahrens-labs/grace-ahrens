@@ -3,12 +3,11 @@ main = "src/index.js"
 compatibility_date = "2024-06-01"
 workers_dev = false
 
-# Cloudflare Email Sending only — no Resend.
+# Fresh binding name avoids destination allowlists stuck on older bindings in the dashboard.
 [[send_email]]
-name = "EMAIL_TRANSACTIONAL"
+name = "EMAIL_OUTBOUND"
 
 [vars]
-# graceahrens.com sender for Grace Ahrens site mail.
-SENDER_EMAIL = "grace@graceahrens.com"
+SENDER_EMAIL = "caleb@ahrenslabs.com"
 SENDER_NAME = "Grace Ahrens"
 REPLY_TO_EMAIL = "grace@graceahrens.com"

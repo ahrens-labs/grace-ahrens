@@ -1,6 +1,12 @@
+const VERIFIED_SENDER = "caleb@ahrenslabs.com";
+const SENDER_ERRORS = new Set([
+  "E_SENDER_NOT_VERIFIED",
+  "E_SENDER_DOMAIN_NOT_AVAILABLE",
+]);
+
 function defaultSender(env) {
   return {
-    email: env.SENDER_EMAIL || "grace@graceahrens.com",
+    email: env.SENDER_EMAIL || VERIFIED_SENDER,
     name: env.SENDER_NAME || "Grace Ahrens",
   };
 }
@@ -24,9 +30,10 @@ function normalizeFrom(from, env) {
   return defaultSender(env);
 }
 
-function buildMessage(env, payload) {
+function buildMessage(env, payload, fromOverride) {
+  const from = fromOverride || normalizeFrom(payload.from, env);
   const message = {
-    from: normalizeFrom(payload.from, env),
+    from,
     subject: String(payload.subject || ""),
   };
 
@@ -35,7 +42,7 @@ function buildMessage(env, payload) {
   if (payload.html) message.html = payload.html;
   if (payload.text) message.text = payload.text;
 
-  const replyTo = payload.replyTo || env.REPLY_TO_EMAIL;
+  const replyTo = payload.replyTo || env.REPLY_TO_EMAIL || "grace@graceahrens.com";
   if (replyTo) {
     message.replyTo = replyTo;
   }
@@ -44,13 +51,14 @@ function buildMessage(env, payload) {
 }
 
 async function sendViaCloudflare(env, message) {
-  if (!env.EMAIL_TRANSACTIONAL) {
+  const binding = env.EMAIL_OUTBOUND || env.EMAIL_TRANSACTIONAL;
+  if (!binding) {
     return { ok: false, reason: "missing_email_binding" };
   }
 
   try {
-    const result = await env.EMAIL_TRANSACTIONAL.send(message);
-    return { ok: true, messageId: result.messageId, via: "cloudflare" };
+    const result = await binding.send(message);
+    return { ok: true, messageId: result.messageId, via: "cloudflare", from: message.from.email };
   } catch (error) {
     return {
       ok: false,
@@ -60,32 +68,23 @@ async function sendViaCloudflare(env, message) {
   }
 }
 
-const SENDER_FALLBACK_ERRORS = new Set([
-  "E_SENDER_NOT_VERIFIED",
-  "E_SENDER_DOMAIN_NOT_AVAILABLE",
-]);
-
 export async function dispatchTransactionalEmail(env, payload) {
-  const message = buildMessage(env, payload);
+  const verifiedFrom = {
+    email: String(env.SENDER_EMAIL || VERIFIED_SENDER).trim(),
+    name: defaultSender(env).name,
+  };
+  const message = buildMessage(env, payload, verifiedFrom);
   const result = await sendViaCloudflare(env, message);
 
   if (result.ok) {
     return result;
   }
 
-  const fallbackEmail = String(env.FALLBACK_SENDER_EMAIL || "").trim();
-  if (
-    fallbackEmail &&
-    SENDER_FALLBACK_ERRORS.has(result.reason) &&
-    message.from.email !== fallbackEmail
-  ) {
-    const retry = {
-      ...message,
-      from: {
-        email: fallbackEmail,
-        name: message.from.name || defaultSender(env).name,
-      },
-    };
+  if (SENDER_ERRORS.has(result.reason) && message.from.email !== VERIFIED_SENDER) {
+    const retry = buildMessage(env, payload, {
+      email: VERIFIED_SENDER,
+      name: verifiedFrom.name,
+    });
     return sendViaCloudflare(env, retry);
   }
 

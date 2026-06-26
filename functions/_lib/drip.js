@@ -17,7 +17,7 @@ export async function processDueDripEmails(env) {
     let updated = false;
 
     if (!drip.email2Sent && drip.email2DueAt <= now) {
-      const result = await sendWelcomeEmail2(env, email, name);
+      const result = await sendWelcomeEmail2(env, email, name, "https://graceahrens.com");
       if (result.ok) {
         drip.email2Sent = true;
         updated = true;
@@ -29,7 +29,7 @@ export async function processDueDripEmails(env) {
     }
 
     if (drip.email2Sent && !drip.email3Sent && drip.email3DueAt <= now) {
-      const result = await sendWelcomeEmail3(env, email, name);
+      const result = await sendWelcomeEmail3(env, email, name, "https://graceahrens.com");
       if (result.ok) {
         drip.email3Sent = true;
         updated = true;

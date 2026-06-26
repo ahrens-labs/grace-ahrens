@@ -75,18 +75,27 @@ function renderSubscriberList(subscribers) {
     : "No subscribers yet.";
 
   if (!list.length) {
-    body.innerHTML = `<tr><td colspan="3" class="admin-subscribers__empty">No subscribers yet.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="4" class="admin-subscribers__empty">No subscribers yet.</td></tr>`;
     return;
   }
 
   body.innerHTML = list
     .map((entry) => {
       const joined = entry.confirmedAt ? formatSubscriberDate(entry.confirmedAt) : "—";
+      const emailAttr = escapeHtml(entry.email);
 
       return `<tr>
         <td>${escapeHtml(entry.name || "—")}</td>
-        <td><a href="mailto:${escapeHtml(entry.email)}">${escapeHtml(entry.email)}</a></td>
+        <td><a href="mailto:${emailAttr}">${emailAttr}</a></td>
         <td>${escapeHtml(joined)}</td>
+        <td class="admin-subscribers__actions">
+          <button
+            type="button"
+            class="btn btn-danger btn-small delete-subscriber-button"
+            data-email="${emailAttr}"
+            data-name="${escapeHtml(entry.name || "")}"
+          >Remove</button>
+        </td>
       </tr>`;
     })
     .join("");
@@ -98,6 +107,36 @@ function escapeHtml(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+let deleteSubscriberTarget = null;
+
+function openDeleteSubscriberModal(email, name) {
+  const modal = document.getElementById("delete-subscriber-modal");
+  const nameEl = document.getElementById("delete-subscriber-name");
+  const emailEl = document.getElementById("delete-subscriber-email");
+  const confirmInput = document.getElementById("delete-subscriber-confirm");
+  const messageEl = document.getElementById("delete-subscriber-message");
+
+  if (!modal || !email) return;
+
+  deleteSubscriberTarget = { email, name: name || "" };
+  nameEl.textContent = name || "—";
+  emailEl.textContent = email;
+  confirmInput.value = "";
+  setMessage(messageEl, "");
+  modal.hidden = false;
+  document.body.classList.add("admin-modal-open");
+  confirmInput.focus();
+}
+
+function closeDeleteSubscriberModal() {
+  const modal = document.getElementById("delete-subscriber-modal");
+  if (!modal) return;
+
+  modal.hidden = true;
+  document.body.classList.remove("admin-modal-open");
+  deleteSubscriberTarget = null;
 }
 
 async function loadSession() {
@@ -150,6 +189,9 @@ async function initAdmin() {
   const sendButton = document.getElementById("send-button");
   const sendConfirmWrap = document.getElementById("send-confirm-wrap");
   const sendConfirmInput = document.getElementById("send-confirm");
+  const deleteSubscriberForm = document.getElementById("delete-subscriber-form");
+  const deleteSubscriberMessage = document.getElementById("delete-subscriber-message");
+  const deleteSubscriberModal = document.getElementById("delete-subscriber-modal");
 
   fillEmailSelect(document.getElementById("login-email"));
   fillEmailSelect(document.getElementById("setup-email"));
@@ -262,6 +304,59 @@ async function initAdmin() {
     sendButton.hidden = false;
     prepareSendButton.hidden = true;
     sendConfirmInput.focus();
+  });
+
+  document.getElementById("subscriber-list-body")?.addEventListener("click", (event) => {
+    const button = event.target.closest(".delete-subscriber-button");
+    if (!button) return;
+    openDeleteSubscriberModal(button.dataset.email, button.dataset.name);
+  });
+
+  deleteSubscriberModal?.querySelectorAll("[data-close-delete-modal]").forEach((element) => {
+    element.addEventListener("click", closeDeleteSubscriberModal);
+  });
+
+  deleteSubscriberModal?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeDeleteSubscriberModal();
+  });
+
+  deleteSubscriberForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setMessage(deleteSubscriberMessage, "");
+
+    if (!deleteSubscriberTarget?.email) {
+      setMessage(deleteSubscriberMessage, "No subscriber selected.", "error");
+      return;
+    }
+
+    const confirm = document.getElementById("delete-subscriber-confirm").value.trim();
+    const submitButton = document.getElementById("delete-subscriber-submit");
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("/api/admin/delete-subscriber", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: deleteSubscriberTarget.email,
+          confirm,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setMessage(deleteSubscriberMessage, data.error || "Could not remove subscriber.", "error");
+        return;
+      }
+
+      closeDeleteSubscriberModal();
+      setMessage(composeMessage, data.message || "Subscriber removed.", "success");
+      await loadSession();
+    } catch {
+      setMessage(deleteSubscriberMessage, "Network error. Please try again.", "error");
+    } finally {
+      submitButton.disabled = false;
+    }
   });
 
   composeForm?.addEventListener("submit", async (event) => {
