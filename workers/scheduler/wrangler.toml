@@ -12,8 +12,9 @@ binding = "EMAIL_WORKER"
 service = "chess-accounts"
 
 [vars]
-SENDER_EMAIL = "grace@graceahrens.com"
+SENDER_EMAIL = "Grace Ahrens <grace@ahrenslabs.com>"
 REPLY_TO_EMAIL = "grace@graceahrens.com"
+SITE_ORIGIN = "https://graceahrens.com"
 
 [triggers]
 crons = ["0 * * * *"]

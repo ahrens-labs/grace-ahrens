@@ -45,7 +45,8 @@ export async function onRequestPost(context) {
       return json({ error: "Only confirmed subscribers can be removed from the admin list." }, 400);
     }
 
-    const emailResult = await sendRemovalEmail(env, email, existing.name);
+    const origin = new URL(request.url).origin;
+    const emailResult = await sendRemovalEmail(env, email, existing.name, origin);
     if (!emailResult.ok) {
       return json(
         {

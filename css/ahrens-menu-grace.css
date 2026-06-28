@@ -1,0 +1,37 @@
+/* Ahrens Labs hamburger on Grace site header (dark navy chrome). */
+
+.site-header .th-hamburger {
+  position: absolute;
+  top: 1.1rem;
+  left: 1rem;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.site-header .th-hamburger:hover {
+  border-color: rgba(147, 197, 253, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.site-header .th-hamburger span {
+  background: #fff;
+}
+
+.site-header .header-inner {
+  padding-left: 3.25rem;
+}
+
+@media (max-width: 768px) {
+  .site-header .th-hamburger {
+    top: 0.85rem;
+    left: 0.75rem;
+    width: 36px;
+    height: 36px;
+  }
+
+  .site-header .header-inner {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}

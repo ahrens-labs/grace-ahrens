@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Lora:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="css/app-site-menu.css?v=1">
+  <link rel="stylesheet" href="css/ahrens-menu-grace.css?v=1">
 </head>
 <body>
   <div class="page-stars" aria-hidden="true"></div>
@@ -35,6 +37,9 @@
       <span class="header-star header-star--ml"></span>
       <span class="header-star header-star--mr"></span>
     </div>
+    <button type="button" class="th-hamburger" id="th-site-menu-btn" aria-label="Open site menu" aria-expanded="false" aria-controls="th-site-menu">
+      <span></span><span></span><span></span>
+    </button>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
       <span></span>
       <span></span>
@@ -83,6 +88,24 @@
     <p>&copy; <span id="year"></span> Grace Ahrens. All rights reserved.</p>
   </footer>
 
+  <div id="th-site-menu-backdrop" class="th-site-menu-backdrop" hidden></div>
+  <div id="th-site-menu" class="th-site-menu" aria-hidden="true">
+    <div class="th-site-menu-head">
+      <a href="https://ahrenslabs.com/index.html" class="th-site-menu-brand">
+        <img src="https://ahrenslabs.com/img/EagleLogo.png" alt="" width="36" height="36">
+        <span>Ahrens Labs</span>
+      </a>
+      <button type="button" class="th-site-menu-close" id="th-site-menu-close" aria-label="Close menu">&times;</button>
+    </div>
+    <nav>
+      <ul></ul>
+    </nav>
+    <div class="th-site-menu-footer">
+      <a href="https://ahrenslabs.com/account-dashboard.html" class="th-site-menu-signout al-site-menu-signout" id="th-site-menu-signout">Sign Out</a>
+    </div>
+  </div>
+
+  <script src="js/ahrens-site-menu.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

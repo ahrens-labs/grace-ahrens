@@ -7,7 +7,7 @@ export function formatEmailSendError(reason, message) {
   switch (reason) {
     case "E_SENDER_NOT_VERIFIED":
     case "E_SENDER_DOMAIN_NOT_AVAILABLE":
-      return `grace@graceahrens.com is not set up for sending yet. In Cloudflare, go to Email → Email Sending → Onboard domain → graceahrens.com.${detail}`;
+      return `grace@ahrenslabs.com is not set up for sending yet. Verify ahrenslabs.com for Email Sending or Resend.${detail}`;
     case "E_RECIPIENT_NOT_ALLOWED":
       return `Cloudflare blocked this recipient.${detail}`;
     case "E_TOO_MANY_RECIPIENTS":
@@ -34,7 +34,7 @@ function getFromAddress(env) {
     return { email: String(override).trim(), name: "Grace Ahrens" };
   }
 
-  return { email: "grace@graceahrens.com", name: "Grace Ahrens" };
+  return { email: "grace@ahrenslabs.com", name: "Grace Ahrens" };
 }
 
 function getReplyTo(env) {
@@ -135,8 +135,10 @@ async function sendViaRestApi(env, payload) {
 }
 
 export async function sendEmail(env, { to, subject, html, text, bcc }) {
+  const from = getFromAddress(env);
   const payload = {
-    from: getFromAddress(env),
+    from,
+    fromName: from.name,
     replyTo: getReplyTo(env),
     subject,
   };

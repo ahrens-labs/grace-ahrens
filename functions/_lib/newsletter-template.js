@@ -74,11 +74,8 @@ function buildLogoHtml() {
     </p>`;
 }
 
-function buildFooterHtml(unsubscribeUrl, footerNote = FOOTER_COPY.signupNote) {
+function buildFooterHtml(unsubscribeUrl) {
   const socialIcons = buildSocialIconsHtml();
-  const unsubscribeHtml = unsubscribeUrl
-    ? `<p style="margin:0;"><a href="${unsubscribeUrl}" style="color:${THEME.silverBright};text-decoration:underline;text-underline-offset:3px;">Unsubscribe</a></p>`
-    : "";
 
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${THEME.navyDeep};border-top:1px solid rgba(210,218,232,0.2);">
@@ -111,8 +108,8 @@ function buildFooterHtml(unsubscribeUrl, footerNote = FOOTER_COPY.signupNote) {
                 <p style="margin:0;">${AUTHOR_NAME}</p>
               </td>
               <td valign="top" align="right" style="font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.55;color:${THEME.grayBlueLight};text-align:right;">
-                <p style="margin:0 0 10px 0;">${footerNote}</p>
-                ${unsubscribeHtml}
+                <p style="margin:0 0 10px 0;">${FOOTER_COPY.signupNote}</p>
+                <p style="margin:0;"><a href="${unsubscribeUrl}" style="color:${THEME.silverBright};text-decoration:underline;text-underline-offset:3px;">Unsubscribe</a></p>
               </td>
             </tr>
           </table>
@@ -121,34 +118,30 @@ function buildFooterHtml(unsubscribeUrl, footerNote = FOOTER_COPY.signupNote) {
     </table>`;
 }
 
-function buildPlainTextFooter(unsubscribeUrl, footerNote = FOOTER_COPY.signupNote) {
+function buildNewsletterText(bodyText, unsubscribeUrl) {
   const textParts = [
+    bodyText,
     "",
     AUTHOR_NAME,
     AUTHOR_TAGLINE,
     "",
     buildSocialLinksText(),
     "",
-    footerNote,
+    FOOTER_COPY.signupNote,
+    "",
+    `Unsubscribe: ${unsubscribeUrl}`,
   ];
-
-  if (unsubscribeUrl) {
-    textParts.push("", `Unsubscribe: ${unsubscribeUrl}`);
-  }
 
   return textParts.filter(Boolean).join("\n");
 }
 
-export function buildStyledEmail(body, { unsubscribeUrl, title = "Grace Ahrens", footerNote } = {}) {
-  const bodyHtml = linkifyHtml(bodyToHtml(body));
-  const note = footerNote || FOOTER_COPY.signupNote;
-
+export function buildNewsletterLayout({ bodyHtml, text, unsubscribeUrl }) {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
+  <title>Newsletter</title>
 </head>
 <body style="margin:0;padding:0;background:#ffffff;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;">
@@ -167,7 +160,7 @@ export function buildStyledEmail(body, { unsubscribeUrl, title = "Grace Ahrens",
           </tr>
           <tr>
             <td style="padding:0;">
-              ${buildFooterHtml(unsubscribeUrl, note)}
+              ${buildFooterHtml(unsubscribeUrl)}
             </td>
           </tr>
         </table>
@@ -177,11 +170,19 @@ export function buildStyledEmail(body, { unsubscribeUrl, title = "Grace Ahrens",
 </body>
 </html>`;
 
-  const text = body + buildPlainTextFooter(unsubscribeUrl, note);
-  return { html, text };
+  return {
+    html,
+    text: buildNewsletterText(text, unsubscribeUrl),
+  };
 }
 
 export function buildNewsletterEmail(body, { unsubscribeUrl, name }) {
   const personalizedBody = personalizeNewsletterText(body, name);
-  return buildStyledEmail(personalizedBody, { unsubscribeUrl, title: "Newsletter" });
+  const bodyHtml = linkifyHtml(bodyToHtml(personalizedBody));
+
+  return buildNewsletterLayout({
+    bodyHtml,
+    text: personalizedBody,
+    unsubscribeUrl,
+  });
 }

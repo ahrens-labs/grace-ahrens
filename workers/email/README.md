@@ -4,19 +4,10 @@ Grace site mail routes through the **chess-accounts** worker.
 
 ## What recipients see
 
-- **From:** Grace Ahrens `<grace@graceahrens.com>`
+- **From:** Grace Ahrens `<grace@ahrenslabs.com>`
 - **Reply-To:** `grace@graceahrens.com`
 
-Mail tries `grace@` first. If that domain is not verified yet, it falls back to `caleb@ahrenslabs.com` so delivery still works.
-
-## To use grace@ as the From address
-
-Verify **graceahrens.com** on one of:
-
-1. **Resend** — [resend.com/domains](https://resend.com/domains) (free tier allows one domain; you may need to swap or upgrade)
-2. **Cloudflare Email Sending** — dashboard → Email → Email Sending → Onboard domain
-
-Until verified, recipients may see From `caleb@ahrenslabs.com` with Reply-To `grace@graceahrens.com`.
+Mail sends from **grace@ahrenslabs.com** (ahrenslabs.com is already verified for sending). Replies go to grace@graceahrens.com.
 
 ## Secrets
 
