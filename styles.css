@@ -600,9 +600,14 @@ main {
 }
 
 .section-card--featured,
+.section-card--ahrens,
 .section-card--newsletter {
   background: #fff;
   border-color: #d9d9d9;
+}
+
+.section-card--ahrens .btn {
+  margin-top: 0.35rem;
 }
 
 .kicker {
