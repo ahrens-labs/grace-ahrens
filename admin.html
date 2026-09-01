@@ -95,9 +95,29 @@
           </div>
           <div>
             <label for="email-body">Message</label>
-            <textarea id="email-body" name="body" rows="14" maxlength="50000" placeholder="Write your newsletter here. Use {name} for each subscriber&apos;s name. Line breaks are preserved." required></textarea>
+            <div class="admin-compose-body">
+              <div class="admin-format-toolbar" role="toolbar" aria-label="Text formatting">
+                <button type="button" class="admin-format-btn" id="format-bold" title="Bold (**text**)">
+                  <strong>B</strong>
+                </button>
+                <button type="button" class="admin-format-btn" id="format-italic" title="Italic (*text*)">
+                  <em>I</em>
+                </button>
+              </div>
+              <textarea id="email-body" name="body" rows="14" maxlength="50000" placeholder="Write your newsletter here. Use {name} for each subscriber&apos;s name. Line breaks are preserved." required></textarea>
+            </div>
           </div>
-          <p class="signup-note">Use <code>{name}</code> in the subject or message to insert each subscriber&apos;s name.</p>
+          <div class="admin-compose-help">
+            <p class="signup-note">
+              Use <code>{name}</code> in the subject or message to insert each subscriber&apos;s name.
+            </p>
+            <p class="signup-note admin-format-help">
+              <strong>Bold and italic:</strong> wrap text in <code>**double asterisks**</code> for
+              <strong>bold</strong>, or <code>*single asterisks*</code> for <em>italic</em>.
+              You can also select text and click <strong>B</strong> or <em>I</em> above the message box
+              (or use Ctrl+B / Ctrl+I).
+            </p>
+          </div>
           <div id="send-confirm-wrap" hidden>
             <label for="send-confirm">Type SEND to email your full list</label>
             <input type="text" id="send-confirm" name="confirm" autocomplete="off" placeholder="SEND">
@@ -105,12 +125,13 @@
           <p class="form-message" id="compose-message" role="status" aria-live="polite" hidden></p>
           <div class="admin-actions">
             <button type="submit" class="btn btn-secondary" data-mode="draft">Save draft</button>
+            <button type="button" class="btn btn-secondary" id="preview-button">Send preview to me</button>
             <button type="button" class="btn btn-primary" id="prepare-send-button">Send to full list</button>
             <button type="submit" class="btn btn-primary" id="send-button" data-mode="send" hidden>Confirm send</button>
           </div>
         </form>
         <p class="signup-privacy">
-          Drafts are saved only when you click Save draft. Sending goes to everyone on the subscriber list.
+          Drafts are saved only when you click Save draft. Send preview to see the formatted email in your inbox before mailing everyone.
         </p>
 
         <section class="admin-subscribers" aria-labelledby="subscriber-list-heading">

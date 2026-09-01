@@ -1,6 +1,8 @@
 import { buildNewsletterEmail, personalizeNewsletterText } from "./newsletter-template.js";
 import { buildUnsubscribeUrl } from "./subscribers.js";
 
+export { bodyToHtml } from "./markup.js";
+
 export function formatEmailSendError(reason, message) {
   const detail = message ? ` (${message})` : "";
 
@@ -187,13 +189,21 @@ export async function sendAdminConfirmationEmail(env, confirmUrl, toEmail) {
   });
 }
 
-export function bodyToHtml(body) {
-  return body
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/\n/g, "<br>\n");
+export async function sendNewsletterPreview(env, subject, body, { to, name, origin }) {
+  const unsubscribeUrl = await buildUnsubscribeUrl(env, origin, to);
+  const { html, text } = buildNewsletterEmail(body, {
+    unsubscribeUrl,
+    name,
+  });
+
+  const previewSubject = `[Preview] ${personalizeNewsletterText(subject, name)}`;
+
+  return sendEmail(env, {
+    to,
+    subject: previewSubject,
+    html,
+    text,
+  });
 }
 
 export async function sendNewsletterToList(env, subject, body, recipients, origin) {

@@ -177,6 +177,48 @@ async function loadSession() {
   showPanel("login-panel");
 }
 
+function wrapTextareaSelection(textarea, before, after) {
+  if (!textarea) return;
+
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const value = textarea.value;
+  const selected = value.slice(start, end);
+  const inner = selected || "text";
+  const replacement = before + inner + after;
+
+  textarea.value = value.slice(0, start) + replacement + value.slice(end);
+  textarea.focus();
+  textarea.setSelectionRange(start + before.length, start + before.length + inner.length);
+  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function initComposeFormatting() {
+  const bodyInput = document.getElementById("email-body");
+  const boldButton = document.getElementById("format-bold");
+  const italicButton = document.getElementById("format-italic");
+
+  boldButton?.addEventListener("click", () => {
+    wrapTextareaSelection(bodyInput, "**", "**");
+  });
+
+  italicButton?.addEventListener("click", () => {
+    wrapTextareaSelection(bodyInput, "*", "*");
+  });
+
+  bodyInput?.addEventListener("keydown", (event) => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+
+    if (event.key === "b" || event.key === "B") {
+      event.preventDefault();
+      wrapTextareaSelection(bodyInput, "**", "**");
+    } else if (event.key === "i" || event.key === "I") {
+      event.preventDefault();
+      wrapTextareaSelection(bodyInput, "*", "*");
+    }
+  });
+}
+
 async function initAdmin() {
   const setupForm = document.getElementById("setup-form");
   const loginForm = document.getElementById("login-form");
@@ -186,6 +228,7 @@ async function initAdmin() {
   const composeMessage = document.getElementById("compose-message");
   const logoutButton = document.getElementById("logout-button");
   const prepareSendButton = document.getElementById("prepare-send-button");
+  const previewButton = document.getElementById("preview-button");
   const sendButton = document.getElementById("send-button");
   const sendConfirmWrap = document.getElementById("send-confirm-wrap");
   const sendConfirmInput = document.getElementById("send-confirm");
@@ -195,6 +238,7 @@ async function initAdmin() {
 
   fillEmailSelect(document.getElementById("login-email"));
   fillEmailSelect(document.getElementById("setup-email"));
+  initComposeFormatting();
 
   handleSetupQuery();
   if (!new URLSearchParams(window.location.search).get("setup")) {
@@ -304,6 +348,52 @@ async function initAdmin() {
     sendButton.hidden = false;
     prepareSendButton.hidden = true;
     sendConfirmInput.focus();
+  });
+
+  previewButton?.addEventListener("click", async () => {
+    setMessage(composeMessage, "");
+
+    const subject = document.getElementById("email-subject").value.trim();
+    const body = document.getElementById("email-body").value.trim();
+
+    if (!subject) {
+      setMessage(composeMessage, "Please enter a subject line.", "error");
+      document.getElementById("email-subject").focus();
+      return;
+    }
+
+    if (!body) {
+      setMessage(composeMessage, "Please enter a message.", "error");
+      document.getElementById("email-body").focus();
+      return;
+    }
+
+    const buttons = composeForm.querySelectorAll("button");
+    buttons.forEach((button) => {
+      button.disabled = true;
+    });
+
+    try {
+      const response = await fetch("/api/admin/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, body, mode: "preview" }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setMessage(composeMessage, data.error || "Could not send preview.", "error");
+        return;
+      }
+
+      setMessage(composeMessage, data.message || "Preview sent.", "success");
+    } catch {
+      setMessage(composeMessage, "Network error. Please try again.", "error");
+    } finally {
+      buttons.forEach((button) => {
+        button.disabled = false;
+      });
+    }
   });
 
   document.getElementById("subscriber-list-body")?.addEventListener("click", (event) => {

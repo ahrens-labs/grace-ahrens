@@ -1,4 +1,4 @@
-import { bodyToHtml } from "./email.js";
+import { bodyToHtml, stripMarkup } from "./markup.js";
 
 const AUTHOR_NAME = "Grace Ahrens";
 const AUTHOR_TAGLINE = "Fantasy Author";
@@ -182,7 +182,7 @@ export function buildNewsletterEmail(body, { unsubscribeUrl, name }) {
 
   return buildNewsletterLayout({
     bodyHtml,
-    text: personalizedBody,
+    text: stripMarkup(personalizedBody),
     unsubscribeUrl,
   });
 }
