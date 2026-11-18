@@ -20,9 +20,9 @@ body.page-editing .site-footer p {
 
 .blue-wing-logo {
   display: block;
-  width: min(100%, 520px);
+  width: min(100%, 640px);
   height: auto;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1.75rem;
 }
 
 .editing-pricing-table {
