@@ -1,0 +1,60 @@
+/* Blue Wing Editing — solid sky-blue page (no fantasy castle background). */
+
+body.page-editing {
+  color: #1a3344;
+  background: #8fd4f0;
+  background: linear-gradient(180deg, #9ee0f5 0%, #7ec8e8 45%, #6eb8de 100%);
+  background-color: #87ceeb;
+}
+
+body.page-editing .page-stars {
+  display: none;
+}
+
+body.page-editing .site-footer {
+  color: #0f2d3d;
+}
+
+body.page-editing .site-footer p {
+  color: #0f2d3d;
+}
+
+.blue-wing-logo {
+  display: block;
+  width: min(100%, 280px);
+  height: auto;
+  margin: 0 auto 1.25rem;
+}
+
+.editing-pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.02rem;
+}
+
+.editing-pricing-table th,
+.editing-pricing-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #c5d8e4;
+}
+
+.editing-pricing-table th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #000;
+  background: #f4fafc;
+}
+
+.editing-pricing-table tr:last-child th,
+.editing-pricing-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.editing-table-wrap {
+  overflow-x: auto;
+  margin: 0.5rem 0 1.25rem;
+  border: 1px solid #c5d8e4;
+  border-radius: 6px;
+}
