@@ -1,9 +1,9 @@
 /* Blue Wing Editing — solid sky-blue page (no fantasy castle background). */
 
 body.page-editing {
-  color: #2a3844;
-  background: linear-gradient(180deg, #f0f3f6 0%, #e6eaee 48%, #dfe4e9 100%);
-  background-color: #e8ecef;
+  color: #243848;
+  background: linear-gradient(180deg, #eff6fc 0%, #e3eff9 48%, #d6e8f6 100%);
+  background-color: #e8f2fa;
 }
 
 body.page-editing .page-stars {
